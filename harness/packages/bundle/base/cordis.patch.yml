@@ -92,9 +92,11 @@
     # Settings may supply a saved selection; consumers read it at creation time.
     - id: agent-default-model
       name: '@deepseek-ai/dsh-agent-default-model'
+      # GhostCode: no bundled model. Empty values pass the required-field schema;
+      # the first model the user picks is saved here through saveSelection.
       config:
-        provider: ollama
-        model: qwen2.5-coder:7b
+        provider: ''
+        model: ''
 
     - id: jobs
       name: '@deepseek-ai/dsh-jobs-local'
@@ -136,28 +138,10 @@
     # Supplying those profiles is exactly what the web Models page does. Which
     # adapters exist is composition; which providers run is the user's settings
     # document.
-    # GhostCode: a local Ollama route ships by default (offline, no key). BYOK
-    # providers (OpenAI, Anthropic, OpenRouter, any OpenAI-compatible gateway)
-    # are added on the Models settings page, which writes the llm-pi-ai section.
     - id: llm-pi-ai
       name: '@deepseek-ai/dsh-llm-pi-ai'
-      config:
-        providers:
-          ollama:
-            displayName: Ollama (local)
-            api: openai-completions
-            baseURL: !!js process.env.OLLAMA_BASE_URL ?? 'http://127.0.0.1:11434/v1'
-            defaultContextWindow: 32768
-            defaultMaxTokens: 8192
-            models:
-              - id: qwen2.5-coder:7b
-                name: Qwen2.5 Coder 7B (local)
-                contextWindow: 32768
-                reasoningEfforts: false
-              - id: qwen2.5-coder:1.5b
-                name: Qwen2.5 Coder 1.5B (local)
-                contextWindow: 32768
-                reasoningEfforts: false
+      # GhostCode: no bundled provider routes. Users add BYOK or local routes
+      # from the model setup flow, which writes the llm-pi-ai settings section.
 
     - id: session-persistence-jsonl
       name: '@deepseek-ai/dsh-session-persistence-jsonl'
@@ -492,6 +476,7 @@
       name: '@deepseek-ai/dsh-web'
       config:
         fetchProvider: http
+        searchProvider: duckduckgo
 
     - id: web-search-deepseek
       name: '@deepseek-ai/dsh-web-search-deepseek'
@@ -507,6 +492,17 @@
 
     - id: web-fetch-http
       name: '@deepseek-ai/dsh-web-fetch-http'
+
+    # GhostCode: keyless search (DuckDuckGo Lite, Wikipedia fallback), so web_search
+    # works the same for every chat model route, cloud or local.
+    - id: web-search-duckduckgo
+      name: '@deepseek-ai/dsh-web-search-duckduckgo'
+
+    # GhostCode: Laya decision engine. Ships with the app but installs nothing
+    # until the user clicks Install; the brain toggle then starts a loopback
+    # sidecar and the stop and command-success decisions run while it is on.
+    - id: laya
+      name: '@deepseek-ai/dsh-laya'
 
     - id: tool-web
       name: '@deepseek-ai/dsh-tool-web'

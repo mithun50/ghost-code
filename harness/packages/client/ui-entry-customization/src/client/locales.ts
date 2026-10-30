@@ -2,9 +2,9 @@
 export const en = {
   install: 'Browse other plugins',
   create: 'Create your plugin',
-  'createPrompt.sidebar': 'Create a DSH plugin with a left sidebar entry.',
-  'createPrompt.conversation': 'Create a DSH conversation view plugin.',
-  'createPrompt.rightbar': 'Create a DSH plugin with a right sidebar entry.',
+  'createPrompt.sidebar': 'Create a GhostCode plugin with a left sidebar entry.',
+  'createPrompt.conversation': 'Create a GhostCode conversation view plugin.',
+  'createPrompt.rightbar': 'Create a GhostCode plugin with a right sidebar entry.',
 } as const
 
 /** Chinese counterpart of the entry-customization dictionary. */

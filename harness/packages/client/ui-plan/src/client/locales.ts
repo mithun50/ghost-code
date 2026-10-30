@@ -39,7 +39,7 @@ export const en = {
   'preview.unavailable': 'Plan preview is unavailable',
   'preview.expired': 'This temporary plan preview has expired. Reopen it from the pending review card.',
   'chip.on.aria': 'Plan mode on, press to turn off',
-  'chip.on.title': 'Plan mode on — click to turn off (/plan off)',
+  'chip.on.title': 'Plan mode on, click to turn off (/plan off)',
   'chip.exitFailed': 'Failed to exit plan mode',
 } satisfies Record<PlanKey, string>
 

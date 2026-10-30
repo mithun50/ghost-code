@@ -14,9 +14,14 @@ import type { LlmFailure, ResolvedRetryPolicy } from '@deepseek-ai/dsh-llm'
 import type {} from '@deepseek-ai/dsh-session-projection'
 import { RetryId } from './brand.ts'
 import type { LlmRetryEventData } from './types.ts'
+import { isNeverRetryable, providerRequestedDelay, providerWait } from './delay.ts'
 
 export type { LlmRetryEventData, LlmRetryStartedEventData } from './types.ts'
 export { RetryId } from './brand.ts'
+export {
+  isNeverRetryable, MAX_PROVIDER_WAIT_MS, parseDuration, providerRequestedDelay, providerWait,
+  retryDelayFromHeaders, retryDelayFromMessage,
+} from './delay.ts'
 
 export const name = 'llm-retry'
 export const inject = ['agents', 'sessionProjections']
@@ -192,6 +197,8 @@ export async function apply(ctx: Context, config: Config = {}, internals: RetryI
     next: () => Promise<RequestErrorAction>,
   ): Promise<RequestErrorAction> {
     if (policy === undefined) return next()
+    // A rejected request size cannot succeed on resend, in either mode.
+    if (isNeverRetryable(failure)) return next()
     const llmRetryProjectionHandle = await projectionReady
     if (signal.aborted || ctx.fiber.uid === null || lifetime.signal.aborted) return
     if (policy.mode === 'always') {
@@ -221,14 +228,14 @@ export async function apply(ctx: Context, config: Config = {}, internals: RetryI
     const retry = previousRetry + 1
     const retryId = previous?.retryId ?? RetryId(randomUUID())
     let delayMs: number
-    if (failure.providerRetryAfterMs !== undefined
-      && Number.isFinite(failure.providerRetryAfterMs)
-      && failure.providerRetryAfterMs > 0) {
-      if (failure.providerRetryAfterMs > policy.maxDelayMs) {
+    const requestedMs = providerRequestedDelay(failure)
+    if (requestedMs !== undefined) {
+      if (requestedMs > policy.maxDelayMs) {
         if (policy.mode === 'normal') return next()
         delayMs = localDelay(policy, retry, random)
       } else {
-        delayMs = failure.providerRetryAfterMs
+        // Wait at least the provider's requested delay so the retry lands outside its limit window.
+        delayMs = providerWait(requestedMs, random)
       }
     } else {
       delayMs = localDelay(policy, retry, random)

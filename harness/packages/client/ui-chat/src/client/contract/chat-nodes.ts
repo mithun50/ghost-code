@@ -90,6 +90,22 @@ export interface TurnTokenUsage {
   readonly routes?: readonly TurnTokenUsageRoute[]
 }
 
+/** Provider-independent timing and call counts for one completed Turn, from durable Session events. */
+export interface TurnStats {
+  /** Wall time from `turn/start` to `turn/end`. */
+  readonly durationMs: number
+  /** Model request attempts, retries included. */
+  readonly apiCalls: number
+  /** Tool invocations the model requested. */
+  readonly toolCalls: number
+  /** Summed attempt time; present only when every attempt was timed. */
+  readonly modelMs?: number
+  /** Output tokens over model time; present only with exact usage and model time. */
+  readonly outputTokensPerSecond?: number
+  /** First recorded content chunk after its attempt opened. */
+  readonly ttftMs?: number
+}
+
 /** Turn-local footer row that owns actions and optional feature contributions. */
 export interface TurnTailChatData {
   readonly turn: number
@@ -101,6 +117,8 @@ export interface TurnTailChatData {
   readonly branchUnavailable: boolean
   /** Exact per-Turn accounting; absent when the loaded evidence is incomplete. */
   readonly tokenUsage?: TurnTokenUsage
+  /** Timing and call counts; absent when the loaded evidence lacks the Turn start. */
+  readonly stats?: TurnStats
 }
 
 /** Turn-level process disclosure projected before the finalized answer. */

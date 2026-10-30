@@ -425,3 +425,58 @@ C:\Projects\ghostcode\
 3. Profiler + router picks the model and shows why.
 4. BYOK switch.
 5. One Laya decision point (task done or not) working and logged.
+
+## 10. Laya plugin (install on demand)
+
+Laya ships inside GhostCode as the `@deepseek-ai/dsh-laya` plugin
+(`harness/packages/extensions/laya`), but nothing is downloaded or started until
+the user asks for it.
+
+### Flow
+
+1. **Not installed (default).** The composer shows a brain button. Clicking it
+   opens a small popover: "Laya decision engine, about 700 MB, runs locally" with
+   an Install button. No Python, model or sidecar exists on disk yet.
+2. **Install (user click only).** The plugin runs `uv venv --python 3.12` in
+   `~/.ghostcode/laya/.venv`, then installs `laya[serve]` with CPU-only torch
+   (`--extra-index-url https://download.pytorch.org/whl/cpu`). Measured on a
+   16 GB Core Ultra 5 laptop: 70 s and 684 MB. Progress and errors stream through
+   the plugin's `status()` remote.
+3. **On.** The brain button turns decisions on. The plugin starts `laya-serve`
+   bound to `127.0.0.1` on a random port with a random bearer key
+   (`LAYA_HOST`, `LAYA_PORT`, `LAYA_API_KEY`). It never binds `0.0.0.0`.
+4. **Off.** The sidecar stops and the hooks pass straight through.
+5. **Uninstall.** Removes `~/.ghostcode/laya`.
+
+The on/off choice is a live setting (`enabled`, default `false`) saved in the
+profile. Laya works the same with BYOK and local models, because it hooks the
+agent loop, not the model adapter.
+
+### Decisions (first two)
+
+| Hook | Question | Type | Action |
+|---|---|---|---|
+| `agent/turn-stopping` | Is the user's request fully done? | noul | Below threshold: continue once with a short "verify and finish" nudge |
+| `tools/post-execute` | Did this command succeed? | noul | Logged; feeds the retry decision next |
+
+Each call has an 800 ms budget. On timeout, error or a missing sidecar the hook
+abstains and calls `next()`, so Laya can never stall or break a turn. Every
+decision (question, probability, latency, action) goes to an in-memory buffer
+(`decisions()` remote) and to `~/.ghostcode/laya/decisions.jsonl`.
+
+### Benchmark: with and without Laya
+
+Same task, same model, same machine, run twice: Laya off, then Laya on. Record
+pass or fail, total time, API calls, tool calls, input and output tokens, tok/s
+(from the per-turn stats row), the number of Laya decisions, and Laya overhead in
+ms (from `decisions.jsonl`). Results go in `docs/research/benchmarks.md`.
+
+### Known limits
+
+- Base checkpoints score 0.34 to 0.36 zero-shot on typed decisions, below the
+  0.461 majority baseline (R3). Expect little or no gain until we fine-tune on our
+  own logged decisions; the benchmark must report that honestly.
+- CPU latency is 192 to 453 ms per call with 4 questions, so only the two hooks
+  above wait for Laya.
+- Next: fine-tune on `decisions.jsonl` labels, then add the escalate-to-cloud and
+  destructive-command decisions.

@@ -339,6 +339,10 @@
     - id: ui-brand-ghostcode
       name: '@deepseek-ai/dsh-client-ui-brand-ghostcode'
 
+    # Composer brain button: installs and toggles the local Laya decision engine.
+    - id: ui-laya
+      name: '@deepseek-ai/dsh-client-ui-laya'
+
     - id: ui-attachment
       name: '@deepseek-ai/dsh-client-ui-attachment'
 

@@ -15,7 +15,7 @@ import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
 import { WebError } from '@deepseek-ai/dsh-web'
 
 const ACCOUNT_PROVIDER = 'deepseek-account'
-const USER_AGENT = 'deepseek-harness/0.0.1'
+const USER_AGENT = 'GhostCode/0.1 (+https://github.com/mithun50/ghost-code)'
 
 /** Authentication and endpoint values resolved once for an operation. */
 export interface DeepSeekWebAuth {

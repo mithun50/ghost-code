@@ -8,6 +8,7 @@ import { hasAssistantReplyContent } from '../contract/assistant-content.ts'
 import type { ChatNode } from '../contract/chat-nodes.ts'
 import type { ChatSnapshot } from '../contract/snapshot.ts'
 import css from './TurnTailNodeView.module.css'
+import actionCss from './MessageIconActions.module.css'
 
 type TurnTailNodeViewProps = ChatNodeViewProps<'turn-tail'>
   & PropsRenderSlots<'conversation.chat.turnTail' | 'conversation.chat.assistant-actions'>
@@ -47,7 +48,24 @@ export const TurnTailNodeView = memo(function TurnTailNodeView({
   const closing = data.closing
   const owner: TurnTailOwnerProps = { turn, seq: closing?.finalNode.seq ?? data.seq, openFile }
   const tail = renderSlot('conversation.chat.turnTail', owner)
-  if (closing === null) return tail === null ? null : <div className={css.root} data-turn-tail={data.turn}>{tail}</div>
+  const usage = detailed && (data.tokenUsage !== undefined || data.stats !== undefined)
+    ? <TurnUsagePanel usage={data.tokenUsage} stats={data.stats} t={t} />
+    : null
+  if (closing === null) {
+    // A failed turn has no closing message to copy or branch from, but it
+    // still spent time and API calls, so it keeps the same stats row.
+    if (tail === null && usage === null) return null
+    return (
+      <div className={css.root} data-turn-tail={data.turn}>
+        {tail}
+        {usage === null ? null : (
+          <div className={`${actionCss.actions} ${css.actions}`} data-clock="end">
+            <span className={actionCss.endInfo}>{usage}</span>
+          </div>
+        )}
+      </div>
+    )
+  }
   // Interruption-frozen partials carry no messageId, so they address no
   // durable message and contribute no per-message actions.
   const messageId = closing.finalNode.messageId
@@ -71,9 +89,7 @@ export const TurnTailNodeView = memo(function TurnTailNodeView({
         branchUnavailable={data.branchUnavailable || hasLaterChatNode}
         className={css.actions}
         extraActions={assistantActions}
-        usageAction={detailed && data.tokenUsage !== undefined
-          ? <TurnUsagePanel usage={data.tokenUsage} t={t} />
-          : null}
+        usageAction={usage}
         t={t}
       />
     </div>

@@ -371,3 +371,90 @@
   height: 12px;
   color: var(--dsw-alias-menu-icon);
 }
+
+/* Empty-catalog entry points into the model setup modal. */
+.choiceCards {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.choiceCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 260px;
+  padding: 10px;
+  border: 0.5px solid var(--dsw-alias-border-l1);
+  border-radius: var(--dsw-radius-md);
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.choiceCard:focus-visible {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+@media (hover: hover) {
+  .choiceCard:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+}
+
+.choiceIcon {
+  flex: none;
+  color: var(--dsw-alias-state-business-primary);
+}
+
+.choiceCopy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.choiceTitle {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.choiceBody {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.manage {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  margin-top: 4px;
+  padding: 0 8px;
+  border: none;
+  border-top: 0.5px solid var(--dsw-alias-border-l1);
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.manage:focus-visible {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+@media (hover: hover) {
+  .manage:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+}
+
+.manageIcon {
+  color: var(--dsw-alias-menu-icon);
+}

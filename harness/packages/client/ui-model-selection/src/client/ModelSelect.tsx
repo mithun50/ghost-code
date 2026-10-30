@@ -37,12 +37,14 @@ import clsx from 'clsx'
 import type { ModelReasoningEffort, ModelSelection } from '@deepseek-ai/dsh-api-remotes/client'
 import {
   IconCheckOutlineRegular, IconChevronDownOutlineRegular, IconChevronRightOutlineRegular, IconCloseFillRegular,
-  IconDataOutlineRegular, IconWarningOutlineRegular, Input, isMobileDevice, rankByName, StateDot, Tag, Toast,
+  IconCodeOutlineRegular, IconDataOutlineRegular, IconGlobeOutlineRegular, IconSlidersTwoOutlineRegular,
+  IconWarningOutlineRegular, Input, isMobileDevice, rankByName, StateDot, Tag, Toast,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { PropsLocale, PropsRenderSlots, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import type { ModelLabelOwner, ModelSelectInjected } from './slots.ts'
 import css from './ModelSelect.module.css'
 import { orderModelProviders } from './provider-order.ts'
+import { ModelSetupModal, type SetupTab } from './ModelSetupModal.tsx'
 
 /** Which pane the dropdown shows: the two-row root or one drilled-in list. */
 type Pane = 'root' | 'model' | 'effort'
@@ -64,7 +66,7 @@ const MEASURE_STYLE: CSSProperties = { visibility: 'hidden', left: 0, top: 0 }
  * @returns the trigger and, while open, the two-level menu.
  */
 export function ModelSelect(
-  { locked, available, directory, load, select, resolveText, t, renderSlot }:
+  { locked, available, directory, load, select, resolveText, setup, t, renderSlot }:
   ModelSelectInjected & Pick<PropsRuntime<'conversation.input.model'>, 'locked'> & PropsLocale<'model'>
     & Omit<PropsRenderSlots<'conversation.input.model.label'>, 'SessionProvider'>,
 ) {
@@ -92,6 +94,19 @@ export function ModelSelect(
   const [menuPos, setMenuPos] = useState<CSSProperties | null>(null)
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const id = useId()
+  const [setupTab, setSetupTab] = useState<SetupTab | null>(null)
+  // A route saved from the setup modal becomes the selection once the
+  // refreshed catalog lists it, when the Session has no usable model yet.
+  const pendingSetup = useRef<ModelSelection | null>(null)
+  useEffect(() => {
+    const want = pendingSetup.current
+    if (want === null) return
+    const listed = state.groups.some(group => group.id === want.provider
+      && group.models.some(model => model.id === want.model))
+    if (!listed) return
+    pendingSetup.current = null
+    void select(want)
+  }, [state.groups, select])
 
   const accountProviderName = t('provider.account')
   const groups = useMemo(() => orderModelProviders(state.groups).map(group => ({
@@ -260,6 +275,17 @@ export function ModelSelect(
     reload()
   }
 
+  const openSetup = (tab: SetupTab): void => {
+    close(false)
+    setSetupTab(tab)
+  }
+
+  const setupSaved = (route: string, model: string): void => {
+    if (state.routable === true && state.current !== null) return
+    pendingSetup.current = { provider: route, model }
+    load()
+  }
+
   const changeQuery = (next: string): void => {
     setQuery(next)
     setHighlightedIndex(0)
@@ -425,7 +451,9 @@ export function ModelSelect(
   const modelLabel = waiting
     ? t('trigger.loading')
     : currentChoice?.model.name
-      ?? t('trigger.fallback')
+      ?? (setup !== undefined && choices.length === 0 && state.status !== 'loading'
+        ? t('trigger.empty')
+        : t('trigger.fallback'))
   const triggerLabel = effortLabel === undefined ? modelLabel : `${modelLabel} · ${effortLabel}`
   const triggerAria = waiting
     ? t('trigger.loading')
@@ -633,6 +661,24 @@ export function ModelSelect(
               {state.status === 'ready' && filteredGroups.length === 0 && (
                 <div className={css.empty} role="status">{t(choices.length === 0 ? 'empty.models' : 'search.empty')}</div>
               )}
+              {setup !== undefined && state.status !== 'loading' && choices.length === 0 && (
+                <div className={css.choiceCards}>
+                  <button type="button" className={css.choiceCard} onClick={() => { openSetup('byok') }}>
+                    <IconGlobeOutlineRegular className={css.choiceIcon} size={18} />
+                    <span className={css.choiceCopy}>
+                      <span className={css.choiceTitle}>{t('empty.cloudTitle')}</span>
+                      <span className={css.choiceBody}>{t('empty.cloudBody')}</span>
+                    </span>
+                  </button>
+                  <button type="button" className={css.choiceCard} onClick={() => { openSetup('local') }}>
+                    <IconCodeOutlineRegular className={css.choiceIcon} size={18} />
+                    <span className={css.choiceCopy}>
+                      <span className={css.choiceTitle}>{t('empty.localTitle')}</span>
+                      <span className={css.choiceBody}>{t('empty.localBody')}</span>
+                    </span>
+                  </button>
+                </div>
+              )}
             </>
           )}
 
@@ -670,8 +716,23 @@ export function ModelSelect(
                 ))}
             </>
           )}
+          {setup !== undefined && pane !== 'effort' && choices.length > 0 && (
+            <button type="button" className={css.manage} onClick={() => { openSetup('byok') }}>
+              <IconSlidersTwoOutlineRegular className={css.manageIcon} size={14} />
+              <span>{t('menu.manage')}</span>
+            </button>
+          )}
         </MenuSurface>,
         document.body,
+      )}
+      {setup !== undefined && setupTab !== null && (
+        <ModelSetupModal
+          t={t}
+          initialTab={setupTab}
+          operations={setup}
+          onClose={() => { setSetupTab(null) }}
+          onSaved={setupSaved}
+        />
       )}
       {toast !== null && (
         <Toast

@@ -108,6 +108,11 @@ async function bench(locale: 'zh' | 'en' = 'zh') {
   }
   const remote = Object.assign(new TestRemote(ctx), { session: sessionRemote })
   ctx.reflect.provide('remote.session', sessionRemote)
+  // The setup modal's namespaces: present so the plugin mounts; these benches
+  // never open the modal, so the stubs are never called.
+  ctx.reflect.provide('remote.llm', {})
+  ctx.reflect.provide('remote.settings', {})
+  ctx.reflect.provide('remote.credentials', {})
   const blocks = new Map<SessionId, { reason: string } | undefined>()
   ctx.provide('conversation', {
     blocks: {

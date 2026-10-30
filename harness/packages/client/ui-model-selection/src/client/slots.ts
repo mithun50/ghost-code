@@ -4,6 +4,7 @@ import type { ModelSelection } from '@deepseek-ai/dsh-api-remotes/client'
 import type { ModelCatalogModel, ModelProviderGroup } from '@deepseek-ai/dsh-api-session-controller/types'
 import type { SnapshotStore } from '@deepseek-ai/dsh-client-store'
 import type { ModelDirectoryState } from './directory.ts'
+import type { SetupOperations } from './setup-operations.ts'
 
 /** Catalog data for a model name inside the composer's existing controls. */
 export interface ModelLabelOwner {
@@ -63,4 +64,6 @@ export interface ModelSelectInjected {
    * @returns the Host outcome, or undefined when this Session cannot select a model.
    */
   select: (selection: ModelSelection) => Promise<RemoteResult<void> | undefined>
+  /** Host operations behind the BYOK and local model setup modal; absent hides the setup entry points. */
+  setup?: SetupOperations
 }

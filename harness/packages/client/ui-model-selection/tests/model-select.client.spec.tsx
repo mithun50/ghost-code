@@ -1121,3 +1121,40 @@ it('restores the account model name after login without changing the saved route
   expect(screen.getByRole('button', { name: /选择模型，当前/ }).textContent).toBe('DeepSeek FlashHigh')
   expect(directory.getSnapshot().current).toEqual(selected)
 })
+
+describe('ModelSelect setup entry points', () => {
+  const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const setup = {
+    listRoutes: vi.fn(() => Promise.resolve([])),
+    discover: vi.fn(() => Promise.reject(new Error('offline'))),
+    saveRoute: vi.fn(() => Promise.resolve()),
+    removeRoute: vi.fn(() => Promise.resolve()),
+  }
+
+  it('offers cloud and local choice cards for an empty catalog and opens the setup modal on the chosen tab', async () => {
+    const directory = createSnapshotStore(state({ current: null, routable: null, groups: [] }))
+    render(<ModelSelect renderSlot={renderLabel} locked={false} available directory={directory} load={vi.fn()}
+      resolveText={resolveText} select={vi.fn()} setup={setup} t={t} />)
+    const trigger = screen.getByRole('button', { name: zh['trigger.selectAria'] })
+    expect(trigger.textContent).toContain(zh['trigger.empty'])
+    fireEvent.click(trigger)
+    expect(screen.getByRole('button', { name: new RegExp(escapeRegExp(zh['empty.localTitle'])) })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(escapeRegExp(zh['empty.cloudTitle'])) }))
+    const dialog = await screen.findByRole('dialog', { name: zh['setup.title'] })
+    expect(dialog.querySelector('[data-provider="groq"]')).not.toBeNull()
+    expect(setup.listRoutes).toHaveBeenCalled()
+  })
+
+  it('shows Manage models under a populated catalog only when setup is wired', () => {
+    const directory = createSnapshotStore(state())
+    const view = render(<ModelSelect renderSlot={renderLabel} locked={false} available directory={directory} load={vi.fn()}
+      resolveText={resolveText} select={vi.fn()} setup={setup} t={t} />)
+    fireEvent.click(screen.getByRole('button', { name: /选择模型/ }))
+    expect(screen.getByRole('button', { name: zh['menu.manage'] })).toBeTruthy()
+    view.unmount()
+    render(<ModelSelect renderSlot={renderLabel} locked={false} available directory={directory} load={vi.fn()}
+      resolveText={resolveText} select={vi.fn()} t={t} />)
+    fireEvent.click(screen.getByRole('button', { name: /选择模型/ }))
+    expect(screen.queryByRole('button', { name: zh['menu.manage'] })).toBeNull()
+  })
+})

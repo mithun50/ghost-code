@@ -401,7 +401,7 @@ describe('provider-routed retry policy', () => {
     ])
     ;({ ctx: context } = await harness(accepted, { mock: normalConfig({
       backoff: { jitterRatio: 1 },
-    }) }))
+    }) }, undefined, { random: () => 0 }))
     const acceptedAgent = await context.agentLoop.create(SessionId('retry-after-accepted'), { provider: 'mock', model: 'mock' })
     const scheduled = waitForRetry(context, acceptedAgent, 1)
     acceptedAgent.followup(createUserMessage({ content: [{ type: 'text', text: 'go' }], source: { kind: 'user' } }))
@@ -423,6 +423,46 @@ describe('provider-routed retry policy', () => {
     expect(rejected.requests).toHaveLength(1)
     expect(rejectedAgent.session.snapshotEvents().some(event => event.type === 'llm/retry')).toBe(false)
   })
+
+  it('waits at least the delay named in a rate-limit message when no header survived', async () => {
+    vi.useFakeTimers()
+    const adapter = new ScriptedAdapter([
+      new LlmError('429 Rate limit reached for model. Please try again in 7.1025s.', 'RATE_LIMIT'),
+      textResponse('done'),
+    ])
+    ;({ ctx: context } = await harness(adapter, undefined, undefined, { random: () => 0 }))
+    const agent = await context.agentLoop.create(SessionId('retry-message-delay'), { provider: 'mock', model: 'mock' })
+    const scheduled = waitForRetry(context, agent, 1)
+    agent.followup(createUserMessage({ content: [{ type: 'text', text: 'go' }], source: { kind: 'user' } }))
+    expect((await scheduled).data.delayMs).toBe(7_103)
+    const idle = waitForIdle(context, agent)
+    await vi.advanceTimersByTimeAsync(7_102)
+    expect(adapter.requests).toHaveLength(1)
+    await vi.advanceTimersByTimeAsync(1)
+    await idle
+    expect(adapter.requests).toHaveLength(2)
+  })
+
+  for (const [label, error] of [
+    ['an HTTP 413', new LlmError('413 Payload Too Large', 'INVALID_REQUEST', { status: 413 })],
+    ['a request-too-large 429', new LlmError('429 Request too large for model. Please reduce your message size and try again.', 'RATE_LIMIT', { status: 429 })],
+  ] as const) {
+    it(`fails at once on ${label} in either mode`, async () => {
+      for (const policy of [normalConfig(), alwaysConfig()]) {
+        vi.useFakeTimers()
+        const adapter = new ScriptedAdapter([error, textResponse('done')])
+        ;({ ctx: context } = await harness(adapter, { mock: policy }))
+        const agent = await context.agentLoop.create(SessionId(`retry-never-${policy.mode}`), { provider: 'mock', model: 'mock' })
+        const idle = waitForIdle(context, agent)
+        agent.followup(createUserMessage({ content: [{ type: 'text', text: 'go' }], source: { kind: 'user' } }))
+        await idle
+        expect(adapter.requests).toHaveLength(1)
+        expect(agent.session.snapshotEvents().some(event => event.type === 'llm/retry')).toBe(false)
+        expect(vi.getTimerCount()).toBe(0)
+        await context.fiber.dispose()
+      }
+    })
+  }
 
   it('uses local jittered backoff when always mode receives an over-cap Retry-After', async () => {
     vi.useFakeTimers()
