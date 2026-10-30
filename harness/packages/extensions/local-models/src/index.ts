@@ -25,6 +25,7 @@ import { CATALOG, catalogModel } from './catalog.ts'
 import { LocalModelsController, type GuardHub } from './controller.ts'
 import { cleanRequest, EgressLog, isLocalProvider, judgeCommand, SessionGuard } from './guard.ts'
 import { sensitiveTarget } from './egress.ts'
+import { LITE_TOOLS, slimLocalRequest } from './local-prompt.ts'
 import { LocalModelManager } from './server.ts'
 import { WEIGHT_SHARE } from './system.ts'
 import type { GuardView } from './types.ts'
@@ -68,8 +69,6 @@ export const Config = z.object({
 })
 
 /** Tools local models keep: enough to code, build and run, with a prompt short enough to start fast. */
-// Web search is left out: small models loop on it instead of writing code.
-const LITE_TOOLS = ['read', 'write', 'edit', 'glob', 'grep', 'pwsh', 'bash', 'job_output', 'job_list', 'job_kill']
 const COMMAND_TOOL = /pwsh|bash|shell|exec|command/i
 
 function textOf(content: unknown): string {
@@ -257,6 +256,13 @@ export function apply(ctx: Context, config: Config): void {
   // Every request to a cloud route is cleaned first, or blocked in privacy mode. Local requests pass untouched.
   const cleaned = new WeakSet<GenerateOptions>()
   ctx.on('llm/stream', function (this: LlmRuntime, options: GenerateOptions, next: () => AsyncIterable<StreamChunk>): AsyncIterable<StreamChunk> {
+    // The built-in local model gets a short prompt and slim tools, so its first token comes fast.
+    if (options.provider === LOCAL_ROUTE && !cleaned.has(options)) {
+      const copy = slimLocalRequest(options)
+      if (isAgentLoopRequest(options)) markAgentLoopRequest(copy)
+      cleaned.add(copy)
+      return this.stream(copy)
+    }
     if (cleaned.has(options) || isLocalProvider(options.provider)) {
       if (options.provider !== LOCAL_ROUTE || manager.warmSaved) return next()
       // Keep the first local prompt's cache on disk so the next server start answers in seconds.
