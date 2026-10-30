@@ -228,3 +228,94 @@
   font-size: 15px;
   line-height: 22px;
 }
+
+/* GhostCode hero: a graded night backdrop, the ghost centered above a large
+   serif title whose last word glows lime, like a spotlit stage floor. */
+.root {
+  position: relative;
+  isolation: isolate;
+}
+
+.backdrop {
+  /* Spans the hero box only, so nothing overflows or scrolls; the mask
+     feathers every edge into the app background like a spotlight. */
+  position: absolute;
+  inset: -120px 0 0 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 45%, rgba(46, 84, 196, 0.55), transparent 72%),
+    radial-gradient(ellipse 80% 26% at 50% 100%, rgba(178, 190, 255, 0.26), transparent 72%),
+    radial-gradient(ellipse 30% 25% at 80% 20%, rgba(198, 244, 50, 0.08), transparent 70%),
+    linear-gradient(180deg, #050a1f 0%, #0a1846 50%, #0b1d57 80%, #08112e 100%);
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 55%, transparent 100%);
+}
+
+/* Film grain keeps the gradients from banding. */
+.backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* The floor: a soft light pool the ghost appears to hover over. */
+.backdrop::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  width: min(900px, 90%);
+  height: 140px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(205, 214, 255, 0.28), transparent 70%);
+  filter: blur(18px);
+}
+
+.headline {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  row-gap: 18px;
+  font-family: 'Instrument Serif', 'DM Serif Display', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: clamp(44px, 6.4vw, 78px);
+  line-height: 1.02;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #f4f5f0;
+  text-align: center;
+}
+
+.accent {
+  font-style: italic;
+  color: #c6f432;
+  text-shadow: 0 0 28px rgba(198, 244, 50, 0.28);
+}
+
+.fishHitbox {
+  filter: drop-shadow(0 18px 28px rgba(10, 20, 60, 0.55));
+}
+
+.tagline {
+  margin: 4px auto 18px;
+  max-width: 34em;
+  color: rgba(226, 230, 245, 0.78);
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stack {
+    animation: hero-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}

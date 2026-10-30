@@ -8,8 +8,8 @@ export const GHOST_PATH =
 
 const EYES = [{ cx: 9.3, cy: 10.2 }, { cx: 14.7, cy: 10.2 }] as const
 
-/** Hero scale relative to the size the headline slot requests (1 keeps the original 34px). */
-const HERO_SCALE = 1
+/** Hero scale relative to the size the headline slot requests: the ghost sits above the title at twice its old size. */
+const HERO_SCALE = 2
 /** Furthest the eyes travel toward the pointer, in grid units. */
 const LOOK_TRAVEL = 0.8
 /** Strongest tilt toward the pointer, in degrees. */

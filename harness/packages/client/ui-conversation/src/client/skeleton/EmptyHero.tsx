@@ -125,6 +125,17 @@ function HeroFish({ hovering }: { hovering: boolean }) {
 }
 
 /**
+ * The headline with its last word set in the accent italic ("Into the *unknown.*").
+ * @param props.text - localized headline.
+ * @returns the title spans.
+ */
+function HeroTitle({ text }: { text: string }) {
+  const cut = text.trimEnd().lastIndexOf(' ')
+  if (cut <= 0) return <span className={css.accent}>{text}</span>
+  return <span>{text.slice(0, cut + 1)}<span className={css.accent}>{text.slice(cut + 1)}</span></span>
+}
+
+/**
  * Render the hero chrome (headline only; no composer, no workspace row).
  * @param props - see {@link HeroShellProps}.
  * @returns the centered hero element tree.
@@ -133,6 +144,7 @@ export function HeroShell({ t, renderSlot, children }: HeroShellProps) {
   const [hovering, setHovering] = useState(false)
   return (
     <div className={css.root}>
+      <div className={css.backdrop} aria-hidden="true" />
       <div className={css.stack}>
         <div className={css.headline}>
           {/* figma 34:10412: fish 34×25 leading the headline, gap 10. */}
@@ -151,7 +163,7 @@ export function HeroShell({ t, renderSlot, children }: HeroShellProps) {
             })}
           </span>
           <span className={css.titleGroup}>
-            <span>{t('hero.headline')}</span>
+            <HeroTitle text={t('hero.headline')} />
           </span>
         </div>
         <p className={css.tagline}>{t('hero.tagline')}</p>
