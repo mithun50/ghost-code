@@ -5,8 +5,11 @@ const tool = (name: string, description: string) => ({ name, description, parame
 
 describe('local prompt', () => {
   it('is short enough to read in about a second on a laptop', () => {
-    expect(LOCAL_PROMPT.length).toBeLessThan(900)
+    expect(LOCAL_PROMPT.length).toBeLessThan(2600)
     expect(LOCAL_PROMPT).toContain('GhostCode')
+    expect(LOCAL_PROMPT).toContain('Never use gradients')
+    expect(LOCAL_PROMPT).toContain('No emojis')
+    expect(/[–—]/.test(LOCAL_PROMPT)).toBe(false)
   })
 
   it('cuts a long description at a sentence end, deterministically', () => {
