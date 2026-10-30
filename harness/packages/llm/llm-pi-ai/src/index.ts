@@ -171,6 +171,24 @@ function directoryEntries(
   return [...entries.values()]
 }
 
+/** GhostCode's keyless local runtimes. Other loopback routes keep pi-ai's ambient key discovery. */
+const KEYLESS_LOCAL_ROUTES: ReadonlySet<string> = new Set(['ghostcode-local', 'ollama', 'lmstudio'])
+
+/**
+ * Whether a base URL points at this machine.
+ * @param url - route base URL, when the profile sets one.
+ * @returns true for localhost and loopback addresses.
+ */
+function isLoopbackURL(url: string | undefined): boolean {
+  if (url === undefined) return false
+  try {
+    const host = new URL(url).hostname.replace(/^\[|\]$/g, '')
+    return host === 'localhost' || host === '::1' || /^127\./.test(host)
+  } catch {
+    return false
+  }
+}
+
 /** Register one generic pi-ai adapter for all configured provider routes. */
 export function apply(ctx: Context, config: Config): void {
   ctx.inject(['settings'], (child) => { child.effect(() => child.settings.configure({ auto: false }, ctx.fiber)) })
@@ -216,7 +234,12 @@ export function apply(ctx: Context, config: Config): void {
     // handing pi-ai `undefined` would let it pick up an unrelated ambient key
     // (OPENAI_API_KEY and friends), billing another tenant for a request the
     // deployment meant to authenticate differently.
-    if (ref === undefined) return undefined
+    if (ref === undefined) {
+      // GhostCode: a keyless loopback runtime (the built-in llama.cpp server,
+      // Ollama, LM Studio) ignores the key, but pi-ai refuses to send without
+      // one. Remote keyless routes keep pi-ai's own environment discovery.
+      return KEYLESS_LOCAL_ROUTES.has(provider) && isLoopbackURL(profile.baseURL) ? 'local-no-key' : undefined
+    }
     const credentials = ctx.get('credentials')
     const hit = credentials !== undefined
       ? (await credentials.resolve(ref))?.value
