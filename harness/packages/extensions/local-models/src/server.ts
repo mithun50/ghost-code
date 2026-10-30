@@ -256,6 +256,8 @@ export class LocalModelManager {
         '-a', model.id,
         // Thinking costs a small model most of its tokens on routine tool steps.
         '--chat-template-kwargs', '{"enable_thinking":false}',
+        // Any thinking the template still emits is parsed out, so tags never leak into replies.
+        '--reasoning-format', 'deepseek',
         // Keep the whole model on the GPU when there is one; quantized KV halves cache memory.
         ...cpuOnly ? [] : ['-ngl', '99'],
         '-fa', 'auto',
@@ -264,7 +266,7 @@ export class LocalModelManager {
         // Reuse the cached prompt prefix across turns so later replies start fast.
         '--cache-reuse', '256',
         '--slot-save-path', this.slotsDir,
-        ...drafting ? ['-md', this.modelPath(draft), ...cpuOnly ? [] : ['-ngld', '99']] : [],
+        ...drafting ? ['-md', this.modelPath(draft), '-cd', String(model.contextWindow), ...cpuOnly ? [] : ['-ngld', '99']] : [],
         ...extra,
       ], { cwd: this.runtimeDir, windowsHide: true, stdio: ['ignore', log, log] })
     } finally {

@@ -141,10 +141,12 @@ export function apply(ctx: Context, config: Config): void {
     const installed = CATALOG.filter(model => manager.installed(model))
     if (installed.length === 0) return
     const current = settings.describe({ redactSecrets: true }).find(entry => entry.ns === 'llm-pi-ai')?.value as
-      { providers?: Record<string, { baseURL?: string, models?: Array<{ id?: string }> }> } | undefined
+      { providers?: Record<string, { baseURL?: string, models?: Array<{ id?: string, contextWindow?: number }> }> } | undefined
     const route = current?.providers?.[LOCAL_ROUTE]
-    const ids = new Set((route?.models ?? []).map(model => model.id))
-    if (route?.baseURL === manager.baseURL && ids.size === installed.length && installed.every(model => ids.has(model.id))) return
+    const saved = new Map((route?.models ?? []).map(model => [model.id, model.contextWindow]))
+    // Rewrite when a model, the URL or a context window changed, so a raised window reaches the menu.
+    if (route?.baseURL === manager.baseURL && saved.size === installed.length
+      && installed.every(model => saved.get(model.id) === model.contextWindow)) return
     const profile = {
       displayName: 'GhostCode Local',
       api: 'openai-completions',
