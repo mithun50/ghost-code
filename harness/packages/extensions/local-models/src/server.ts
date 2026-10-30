@@ -26,6 +26,17 @@ function killPid(pid: number): void {
   }
 }
 
+/** Whether a process with this pid is running. */
+function processAlive(pid: number): boolean {
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch (error: unknown) {
+    // EPERM means it exists but belongs to someone else.
+    return (error as { code?: string }).code === 'EPERM'
+  }
+}
+
 /** Whether a TCP port on loopback is free. */
 async function portFree(port: number): Promise<boolean> {
   return await new Promise((resolve) => {
@@ -98,7 +109,10 @@ export class LocalModelManager {
   /** Kill a server an earlier Host left running after a crash. */
   private reapStale(): void {
     let pid: number
-    try { pid = Number(readFileSync(this.pidFile, 'utf8').trim()) } catch { return }
+    let owner: number
+    try { [pid, owner] = readFileSync(this.pidFile, 'utf8').trim().split(/\s+/).map(Number) as [number, number] } catch { return }
+    // Another live GhostCode on the same home owns this server: leave it alone.
+    if (Number.isInteger(owner) && owner > 0 && owner !== process.pid && processAlive(owner)) return
     rmSync(this.pidFile, { force: true })
     if (!Number.isInteger(pid) || pid <= 0) return
     // Only kill the pid when it is still a llama-server, not a reused number.
@@ -273,7 +287,8 @@ export class LocalModelManager {
       closeSync(log)
     }
     this.child = child
-    if (child.pid !== undefined) writeFileSync(this.pidFile, String(child.pid))
+    // The owning Host's pid lets a second GhostCode on this home tell a live server from a leftover.
+    if (child.pid !== undefined) writeFileSync(this.pidFile, `${String(child.pid)} ${String(process.pid)}`)
     const onHostExit = (): void => { if (child.pid !== undefined) killPid(child.pid) }
     process.once('exit', onHostExit)
     let exited = false
