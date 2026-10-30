@@ -6,7 +6,7 @@ import {
   Modal, SegmentedControl,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import { monogram, PROVIDER_PRESETS } from './providers.ts'
-import type { SavedRoute, SetupOperations } from './setup-operations.ts'
+import { LOCAL_ROUTE, type SavedRoute, type SetupOperations } from './setup-operations.ts'
 import { ProviderForm, type FormTarget, type SetupTranslate } from './ProviderForm.tsx'
 import { LocalRuntimes } from './LocalRuntimes.tsx'
 import css from './ModelSetup.module.css'
@@ -22,16 +22,18 @@ export interface ModelSetupModalProps {
   onClose: () => void
   /** A route was saved; the caller may select its first model. */
   onSaved: (route: string, firstModel: string) => void
+  /** A built-in local model is running and saved; the caller selects it. */
+  onLocalReady?: (route: string, model: string) => void
 }
 
-const LOCAL_ROUTES = new Set(['ollama', 'lmstudio'])
+const LOCAL_ROUTES = new Set(['ollama', 'lmstudio', LOCAL_ROUTE])
 
 /**
  * Render the setup modal.
  * @param props - see {@link ModelSetupModalProps}.
  * @returns the portaled modal.
  */
-export function ModelSetupModal({ t, initialTab, operations, onClose, onSaved }: ModelSetupModalProps) {
+export function ModelSetupModal({ t, initialTab, operations, onClose, onSaved, onLocalReady }: ModelSetupModalProps) {
   const [tab, setTab] = useState<SetupTab>(initialTab)
   const [routes, setRoutes] = useState<readonly SavedRoute[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -83,7 +85,15 @@ export function ModelSetupModal({ t, initialTab, operations, onClose, onSaved }:
       />
     )
     : tab === 'local'
-      ? <LocalRuntimes t={t} operations={operations} routes={routes} onPick={setTarget} />
+      ? (
+        <LocalRuntimes
+          t={t}
+          operations={operations}
+          routes={routes}
+          onPick={setTarget}
+          onReady={(route, model) => { refresh(); onLocalReady?.(route, model) }}
+        />
+      )
       : (
         <div className={css.stack}>
           <h3 className={css.sectionTitle}>{t('byok.yours')}</h3>

@@ -286,6 +286,13 @@ export function ModelSelect(
     load()
   }
 
+  // The user picked this local model on purpose, so it replaces the current one.
+  const localReady = (route: string, model: string): void => {
+    pendingSetup.current = { provider: route, model }
+    setSetupTab(null)
+    load()
+  }
+
   const changeQuery = (next: string): void => {
     setQuery(next)
     setHighlightedIndex(0)
@@ -732,6 +739,7 @@ export function ModelSelect(
           operations={setup}
           onClose={() => { setSetupTab(null) }}
           onSaved={setupSaved}
+          onLocalReady={localReady}
         />
       )}
       {toast !== null && (

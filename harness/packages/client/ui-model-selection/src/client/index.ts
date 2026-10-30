@@ -27,7 +27,8 @@ import type { ModelDirectoryState } from './directory.ts'
 import { ModelDirectoryResolver } from './service.ts'
 import type { ModelSelectInjected } from './slots.ts'
 import { ModelSelect } from './ModelSelect.tsx'
-import { createSetupOperations } from './setup-operations.ts'
+import localModelsRemote from '@deepseek-ai/dsh-local-models/remote'
+import { createSetupOperations, LOCAL_ROUTE } from './setup-operations.ts'
 import { en, ja, es, fr, de, ru, pt, zh, type ModelKey } from './locales.ts'
 import { orderModelProviders } from './provider-order.ts'
 
@@ -125,7 +126,34 @@ export function apply(ctx: ClientContext): void {
 
   ctx.plugin(ModelDirectoryResolver)
   // Bound once: the seat receives callbacks, never a context.
-  const setup = createSetupOperations(ctx)
+  // Built-in local models are optional: a Host without the plugin hides that section.
+  // Calls go through a scope that declares remote.localModels; the root context may not read it.
+  const localReady = ctx.remote.$mount(localModelsRemote).then(
+    () => new Promise<ClientContext | undefined>((resolve) => {
+      ctx.inject(['remote.localModels'], (scope: ClientContext) => { resolve(scope) })
+    }),
+    (error: unknown) => {
+      console.warn('ui-model-selection: built-in local models are unavailable', error)
+      return undefined
+    },
+  )
+  const setup = createSetupOperations(ctx, localReady)
+  // Models installed earlier appear in the model menu without opening setup again.
+  void localReady.then(async (scope) => {
+    const local = setup.local
+    if (scope === undefined || local === undefined) return
+    try {
+      const status = await local.status()
+      const installed = status.models.filter(model => model.installed)
+      if (installed.length === 0) return
+      const saved = (await setup.listRoutes()).find(route => route.route === LOCAL_ROUTE)
+      const current = saved !== undefined && saved.models.length === installed.length
+        && installed.every(model => saved.models.some(row => row.id === model.id))
+      if (!current) await local.saveRoute(status.endpoint, installed)
+    } catch (error: unknown) {
+      console.warn('ui-model-selection: could not register the built-in local models', error)
+    }
+  })
 
   // Entry 1: the /model popupSelect over the shared directory.
   ctx.inject(['commandUi', 'modelDirectories'], (scope: ClientContext) => {
