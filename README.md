@@ -9,8 +9,47 @@ a local model, it switches to your own API key (BYOK).
 - CLI: `ghostcode` (short alias `ghost`)
 - Home directory: `~/.ghostcode` (env `GHOSTCODE_HOME`)
 - Base: fork of [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (MIT). GhostCode is not affiliated with or endorsed by DeepSeek.
-- Local runtime: [Ollama](https://github.com/ollama/ollama) / [llama.cpp](https://github.com/ggml-org/llama.cpp)
+- Local runtime: built-in [llama.cpp](https://github.com/ggml-org/llama.cpp) server, installed from the app (Ollama and LM Studio also work)
 - Decision layer: [Laya](https://huggingface.co/convaiinnovations/laya) (Apache 2.0)
+
+## Run it
+
+Needs Node 24.9+ and pnpm 11 (`corepack enable` sets up pnpm). Windows, macOS and Linux.
+
+```bash
+cd harness
+pnpm install
+pnpm run build
+pnpm ghostcode web
+```
+
+Open the URL it prints (port 3080). To use another port: `pnpm ghostcode web --port 3090`.
+
+### Local model, one click
+
+1. Click the model name under the message box, then **Manage**, then the **Local** tab.
+2. GhostCode scans the computer (CPU, free RAM, GPU, free disk) and marks the recommended model.
+3. Click **Install**. It downloads llama.cpp (about 36 MB) and the model with a progress bar, starts the server, measures its speed and selects it.
+
+The default is **Qwen3.5 2B** (4-bit, 1.3 GB) with **Qwen3.5 0.8B** as a draft model for speculative decoding. On an Intel Core Ultra 5 laptop with Arc graphics it measured 23 tokens/s alone and 27 to 30 tokens/s with the draft. Model weights may use 67.5% of free RAM; bigger models are marked as needing more memory.
+
+Every download is pinned to a Hugging Face revision and checked against its SHA-256. Interrupted downloads resume. Files go to `~/.ghostcode/local-models`.
+
+### Laya, one click
+
+Click the brain button in the composer, then **Install Laya**. It downloads `uv` if it is missing, creates a Python environment, installs `laya[serve]` (CPU build, about 700 MB) and the English checkpoint (807 MB), with a progress bar, then turns Laya on. Files go to `~/.ghostcode/laya`.
+
+### Stop everything
+
+```bash
+pnpm ghostcode kill
+```
+
+Stops the GhostCode server, the local model server and Laya. The model server also stops when GhostCode exits, and a server left behind by a crash is stopped on the next start.
+
+### Never leak, verify before escalating
+
+Click the shield badge in the composer. See [docs/HURDLE.md](docs/HURDLE.md) for what it shows, the code behind it and a demo script.
 
 ## Layout
 
