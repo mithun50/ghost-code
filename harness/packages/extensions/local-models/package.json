@@ -1,0 +1,65 @@
+{
+  "name": "@deepseek-ai/dsh-local-models",
+  "description": "GhostCode local models: system scan, pinned low-bit GGUF catalog, one-click install and a llama.cpp server that lives and dies with the Host",
+  "version": "0.2.2-alpha.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mithun50/ghost-code.git",
+    "directory": "harness/packages/extensions/local-models"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./types": {
+      "types": "./lib/types/types.d.ts",
+      "default": "./lib/types/types.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json",
+    "./typert": {
+      "types": "./lib/typert.host.d.ts",
+      "default": "./lib/typert.host.js"
+    },
+    "./remote": {
+      "types": "./lib/typert.remote-client.d.ts",
+      "default": "./lib/typert.remote-client.js"
+    }
+  },
+  "files": [
+    "lib/index.js",
+    "lib/types/**/*.js",
+    "lib/types/**/*.d.ts",
+    "lib/typert.host.js",
+    "lib/typert.host.d.ts",
+    "lib/typert.remote-client.js",
+    "lib/typert.remote-client.d.ts"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/schemastery": "workspace:~"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "workspace:~",
+    "@deepseek-ai/dsh-agent": "workspace:*",
+    "@deepseek-ai/dsh-home-paths": "workspace:*",
+    "@deepseek-ai/dsh-llm": "workspace:*",
+    "@deepseek-ai/dsh-tools": "workspace:*",
+    "@deepseek-ai/dsh-typert-protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "workspace:~",
+    "@deepseek-ai/dsh-agent": "workspace:*",
+    "@deepseek-ai/dsh-home-paths": "workspace:*",
+    "@deepseek-ai/dsh-llm": "workspace:*",
+    "@deepseek-ai/dsh-tools": "workspace:*",
+    "@deepseek-ai/dsh-typert-protocol": "workspace:*"
+  }
+}
