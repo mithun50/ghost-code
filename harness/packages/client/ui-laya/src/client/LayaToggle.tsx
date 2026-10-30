@@ -9,11 +9,30 @@ import css from './LayaToggle.module.css'
 export interface LayaView {
   readonly state: 'not-installed' | 'installing' | 'off' | 'starting' | 'on' | 'error'
   readonly phase?: string
+  readonly progress?: { readonly done: number, readonly total: number }
   readonly error?: string
+}
+
+/** Megabytes with one decimal under 10 MB, whole numbers above. */
+function megabytes(bytes: number): string {
+  const mb = bytes / 1_048_576
+  return mb < 10 ? mb.toFixed(1) : String(Math.round(mb))
+}
+
+/** One recorded decision; matches `LayaDecision`. */
+export interface LayaDecisionView {
+  readonly time: number
+  readonly hook: string
+  readonly question: string
+  readonly probability?: number
+  readonly latencyMs: number
+  readonly action: string
 }
 
 /** Host operations; a string result is the failure message. */
 export interface LayaOperations {
+  /** Recent decisions, newest last; absent hides the decision chip. */
+  decisions?(limit: number): Promise<LayaDecisionView[] | string>
   status(): Promise<LayaView | string>
   install(): Promise<LayaView | string>
   enable(): Promise<LayaView | string>
@@ -26,6 +45,8 @@ export interface LayaToggleProps {
 }
 
 const POLL_MS = 1500
+const DECISION_POLL_MS = 2000
+const FRESH_MS = 5000
 
 /**
  * Render the brain button and, when Laya is missing or failed, its popover.
@@ -60,6 +81,33 @@ export function LayaToggle({ ops, t }: LayaToggleProps) {
     const timer = setInterval(() => { void ops.status().then(accept) }, POLL_MS)
     return () => { clearInterval(timer) }
   }, [polling, ops])
+
+  // While Laya is on, show what it decided for the latest prompt.
+  const [decision, setDecision] = useState<LayaDecisionView | undefined>(undefined)
+  const [fresh, setFresh] = useState(false)
+  const seen = useRef(0)
+  const isOn = view?.state === 'on'
+  useEffect(() => {
+    if (!isOn || ops.decisions === undefined) return
+    let freshTimer: ReturnType<typeof setTimeout> | undefined
+    const tick = (): void => {
+      void ops.decisions?.(1).then((rows) => {
+        if (!alive.current || typeof rows === 'string') return
+        const last = rows.at(-1)
+        if (last === undefined) return
+        setDecision(last)
+        if (seen.current !== 0 && last.time !== seen.current) {
+          setFresh(true)
+          if (freshTimer !== undefined) clearTimeout(freshTimer)
+          freshTimer = setTimeout(() => { if (alive.current) setFresh(false) }, FRESH_MS)
+        }
+        seen.current = last.time
+      })
+    }
+    tick()
+    const timer = setInterval(tick, DECISION_POLL_MS)
+    return () => { clearInterval(timer); if (freshTimer !== undefined) clearTimeout(freshTimer) }
+  }, [isOn, ops])
 
   useEffect(() => {
     if (!open) return
@@ -119,6 +167,49 @@ export function LayaToggle({ ops, t }: LayaToggleProps) {
         {working && !errored ? <StateDot state="ongoing" /> : <IconThinkOutlineRegular size={16} />}
         {state === 'on' && !errored ? <span>{t('label.on')}</span> : null}
       </button>
+      {isOn && decision !== undefined && !errored && (
+        <span
+          className={css.decision}
+          data-fresh={fresh ? '' : undefined}
+          data-action={decision.action}
+          title={t('decision.title', { question: decision.question })}
+          data-laya-decision
+        >
+          {t('decision.label', {
+            verdict: t(`decision.${decision.action}` as LayaKey) || decision.action,
+            percent: decision.probability === undefined ? '-' : String(Math.round(decision.probability * 100)),
+            ms: String(decision.latencyMs),
+          })}
+        </span>
+      )}
+      {polling && !errored && (
+        <div className={css.progress} role="status" aria-live="polite">
+          <p className={css.title}>{state === 'installing' ? t('tooltip.installing') : t('tooltip.starting')}</p>
+          {view?.phase !== undefined && <p className={css.phase}>{view.phase}</p>}
+          <div
+            className={css.track}
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            {...view?.progress === undefined || view.progress.total === 0
+              ? {}
+              : { 'aria-valuenow': Math.floor((view.progress.done / view.progress.total) * 100) }}
+          >
+            {view?.progress === undefined || view.progress.total === 0
+              ? <div className={css.indeterminate} />
+              : <div className={css.fill} style={{ width: `${String((view.progress.done / view.progress.total) * 100)}%` }} />}
+          </div>
+          {view?.progress !== undefined && view.progress.total > 0 && (
+            <p className={css.bytes}>
+              {t('progress.bytes', {
+                done: megabytes(view.progress.done),
+                total: megabytes(view.progress.total),
+                percent: String(Math.floor((view.progress.done / view.progress.total) * 100)),
+              })}
+            </p>
+          )}
+        </div>
+      )}
       {open && needsPopover && (
         <div className={css.popover} role="dialog" aria-label={t('popover.title')}>
           <p className={css.title}>{t('popover.title')}</p>
@@ -131,7 +222,8 @@ export function LayaToggle({ ops, t }: LayaToggleProps) {
               variant="primary"
               onClick={() => {
                 setOpen(false)
-                run(() => (errored ? ops.enable() : ops.install()))
+                // Install resumes: it skips finished steps, then starts Laya.
+                run(() => ops.install())
               }}
             >
               {errored ? t('popover.retry') : t('popover.install')}

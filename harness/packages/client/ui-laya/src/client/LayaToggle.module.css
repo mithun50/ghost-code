@@ -87,3 +87,203 @@
   justify-content: flex-end;
   gap: 8px;
 }
+
+/* Install and start progress: stays open on its own while Laya works. */
+.progress {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  width: 280px;
+  padding: 12px;
+  border: 0.5px solid var(--dsw-alias-border-l1);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-module-platform);
+  box-shadow: var(--dsw-elevation-prominent);
+  color: var(--dsw-alias-label-primary);
+  font-family: var(--dsw-font-family);
+}
+
+.phase {
+  margin: 0 0 8px;
+  overflow: hidden;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.track {
+  position: relative;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--dsw-alias-state-business-primary);
+  transition: width 0.4s ease;
+}
+
+.indeterminate {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  border-radius: 3px;
+  background: var(--dsw-alias-state-business-primary);
+  animation: slide 1.2s ease-in-out infinite;
+}
+
+@keyframes slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(290%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indeterminate { animation: none; width: 100%; opacity: 0.5; }
+}
+
+.bytes {
+  margin: 6px 0 0;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Privacy shield: the hurdle features, visible in the composer. */
+.button[data-state='cloud'] {
+  color: var(--dsw-alias-state-warning-primary, #d98a00);
+}
+
+.count {
+  min-width: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--dsw-alias-state-business-primary);
+  color: #fff;
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.layaDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c6f432;
+  box-shadow: 0 0 0 0 rgba(198, 244, 50, 0.6);
+  animation: laya-pulse 1.8s ease-out infinite;
+}
+
+@keyframes laya-pulse {
+  70% { box-shadow: 0 0 0 6px rgba(198, 244, 50, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(198, 244, 50, 0); }
+}
+
+.guardPopover {
+  width: 360px;
+  max-height: min(560px, 70vh);
+  overflow-y: auto;
+}
+
+.section {
+  margin: 0 0 10px;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--dsw-alias-border-l1);
+}
+
+.sectionTitle {
+  margin: 0 0 4px;
+  color: var(--dsw-alias-label-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.line {
+  margin: 0 0 4px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.line code {
+  font-size: 11px;
+}
+
+.hint {
+  margin: 0 0 4px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.pillOk,
+.pillWarn,
+.pillIdle {
+  padding: 0 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.pillOk { background: rgba(120, 200, 80, 0.18); color: #4f9a2a; }
+.pillWarn { background: rgba(230, 150, 30, 0.18); color: #c27a00; }
+.pillIdle { background: var(--dsw-alias-interactive-bg-hover); color: var(--dsw-alias-label-tertiary); }
+
+.list {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.list li { margin: 0 0 3px; }
+
+.time {
+  color: var(--dsw-alias-label-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* The latest Laya decision, shown on every prompt while Laya is on. */
+.decision {
+  max-width: 260px;
+  margin-left: 4px;
+  padding: 2px 8px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-secondary);
+  font-family: var(--dsw-font-family);
+  font-size: 11px;
+  line-height: 18px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.decision[data-fresh] {
+  background: rgba(198, 244, 50, 0.18);
+  color: var(--dsw-alias-label-primary);
+}
+
+.decision[data-action='continue'],
+.decision[data-action='flag-failure'] {
+  color: #c27a00;
+}
