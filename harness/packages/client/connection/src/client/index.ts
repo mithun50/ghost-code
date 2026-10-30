@@ -205,7 +205,10 @@ interface BrowserNetworkTarget {
   removeEventListener(type: 'online' | 'offline', listener: () => void): void
 }
 
-function watchBrowserNetwork(controller: ConnectionController): () => void {
+function watchBrowserNetwork(controller: ConnectionController, loopback: boolean): () => void {
+  // GhostCode is offline-first: a Host on this machine stays reachable with no
+  // internet, so the browser's online/offline signal must not mark it disconnected.
+  if (loopback) return () => {}
   const browser = (globalThis as { readonly window?: BrowserNetworkTarget }).window
   const initiallyAvailable = browser?.navigator?.onLine
   if (browser === undefined || initiallyAvailable === undefined) return () => {}
@@ -325,7 +328,7 @@ export function installConnection(ctx: Context, options: ConnectionInstallOption
           sinks.onStateChange?.(state)
         },
       }, { ...recovery, ...config })
-      const current = { token, source, controller, stopNetworkWatch: watchBrowserNetwork(controller) }
+      const current = { token, source, controller, stopNetworkWatch: watchBrowserNetwork(controller, handle.isLoopback) }
       owner = current
       controller.start()
       return {
