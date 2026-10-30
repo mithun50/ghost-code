@@ -51,6 +51,13 @@ Stops the GhostCode server, the local model server and Laya. The model server al
 
 Click the shield badge in the composer. See [docs/HURDLE.md](docs/HURDLE.md) for what it shows, the code behind it and a demo script.
 
+## Docs
+
+- [Architecture](docs/ARCHITECTURE.md): how the pieces fit, with diagrams
+- [Hurdle: Never Leak, Verify Before Escalating](docs/HURDLE.md): what each hint maps to, and a demo script
+- [Benchmarks](docs/BENCHMARK.md): Laya accuracy, local model speed, cloud vs local website build
+- [AGENTS.md](AGENTS.md): instructions for coding agents working in this repo
+
 ## Layout
 
 ```text
