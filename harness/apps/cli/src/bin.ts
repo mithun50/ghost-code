@@ -27,6 +27,11 @@ export async function runCli(options: RunCliOptions = {}): Promise<void> {
   // GhostCode: GHOSTCODE_HOME is the public name; mirror it so every DSH_HOME reader agrees.
   const ghostHome = process.env.GHOSTCODE_HOME
   if (ghostHome !== undefined && ghostHome.trim().length > 0) process.env.DSH_HOME = ghostHome
+  // GhostCode kill switch: stop the Host, the local model server and Laya.
+  if (process.argv[2] === 'kill') {
+    const { runKill } = await import('./kill.ts')
+    process.exit(runKill())
+  }
   const version = getDshRuntimeVersion()
   const { manageDesktopProfile, ...profileOptions } = options
   const invocation = parseDshArgs(process.argv.slice(2), version, manageDesktopProfile)

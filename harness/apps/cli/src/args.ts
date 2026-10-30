@@ -90,6 +90,7 @@ function rejectElectronProfile(program: Command, profile: string): void {
 const HELP_EXAMPLES = `
 Examples:
   dsh web                                   boot the web profile (same as: dsh --profile web)
+  dsh kill                                  stop GhostCode, its local model server and Laya
   dsh rescue --from-default-profile web
                                             recreate rescue from the shipped web template, then boot it
   dsh headless "run the tests"              answer one task, print the result, and exit
