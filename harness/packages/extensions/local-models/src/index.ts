@@ -257,9 +257,10 @@ export function apply(ctx: Context, config: Config): void {
   const cleaned = new WeakSet<GenerateOptions>()
   ctx.on('llm/stream', function (this: LlmRuntime, options: GenerateOptions, next: () => AsyncIterable<StreamChunk>): AsyncIterable<StreamChunk> {
     // The built-in local model gets a short prompt and slim tools, so its first token comes fast.
-    if (options.provider === LOCAL_ROUTE && !cleaned.has(options)) {
+    // Only the agent's own steps: one-shot requests such as session titles keep their instructions.
+    if (options.provider === LOCAL_ROUTE && !cleaned.has(options) && isAgentLoopRequest(options)) {
       const copy = slimLocalRequest(options)
-      if (isAgentLoopRequest(options)) markAgentLoopRequest(copy)
+      markAgentLoopRequest(copy)
       cleaned.add(copy)
       return this.stream(copy)
     }
