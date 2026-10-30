@@ -265,6 +265,30 @@ export class TypertGatewayService extends Service implements TypertGateway {
           },
         )
         const releases = new Set<Promise<void>>()
+        // GhostCode: when the last browser tab has been gone for a while, stop the
+        // Host so the local model server and Laya stop with it. A refresh reconnects
+        // within seconds, so only a closed browser reaches the timeout.
+        // GHOSTCODE_IDLE_EXIT_SECONDS sets it (default 120); 0 turns it off.
+        const idleSeconds = Number(process.env['GHOSTCODE_IDLE_EXIT_SECONDS'] ?? '120')
+        let openSockets = 0
+        let idleTimer: ReturnType<typeof setTimeout> | undefined
+        const socketOpened = (): void => {
+          openSockets++
+          if (idleTimer !== undefined) { clearTimeout(idleTimer); idleTimer = undefined }
+        }
+        const socketClosed = (): void => {
+          openSockets = Math.max(0, openSockets - 1)
+          if (openSockets > 0 || !(idleSeconds > 0) || idleTimer !== undefined) return
+          idleTimer = setTimeout(() => {
+            idleTimer = undefined
+            if (openSockets > 0) return
+            console.log(`dsh web: no browser connected for ${String(idleSeconds)} s; shutting down`)
+            // The launcher's SIGTERM handler disposes every plugin, which stops the model server and Laya.
+            process.emit('SIGTERM')
+          }, idleSeconds * 1000)
+          idleTimer.unref?.()
+        }
+        webCtx.effect(() => () => { if (idleTimer !== undefined) clearTimeout(idleTimer) }, 'api-gateway: idle shutdown')
         webCtx.effect(function* () {
           yield async () => {
             await mux.close()
@@ -287,9 +311,11 @@ export class TypertGatewayService extends Service implements TypertGateway {
                 releases.add(done)
                 void done.then(() => { releases.delete(done) })
               }
+              socketOpened()
               const closed = (): void => {
                 socket.removeListener('error', release)
                 release()
+                socketClosed()
               }
               socket.on('error', release)
               socket.once('close', closed)
