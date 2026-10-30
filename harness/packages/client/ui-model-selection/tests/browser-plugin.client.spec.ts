@@ -140,6 +140,8 @@ async function bench(locale: 'zh' | 'en' = 'zh') {
   const localeRuntime = new LocaleRuntime(ctx)
   // There is no jsdom `window` in this lane, so browser-language detection
   // never runs. Each bench states the locale its assertions require.
+  // Only English is built in; a bench in another language registers it first.
+  if (locale !== 'en') localeRuntime.addLanguage({ id: locale, label: locale, fallback: 'en' })
   localeRuntime.setLocale(locale)
   ctx.provide('locale', localeRuntime)
   const scopes = new Map<SessionId, Context>()
