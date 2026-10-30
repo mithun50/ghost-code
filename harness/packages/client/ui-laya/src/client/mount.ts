@@ -46,7 +46,7 @@ async function settle(call: Promise<RemoteResult<LayaView>>): Promise<LayaView |
 function registerSeat(ctx: Context): void {
   const ops: LayaOperations = {
     status: () => settle(ctx.remote.laya.status()),
-    install: () => settle(ctx.remote.laya.install()),
+    install: () => settle(ctx.remote.laya.installLaya()),
     enable: () => settle(ctx.remote.laya.enable()),
     disable: () => settle(ctx.remote.laya.disable()),
   }

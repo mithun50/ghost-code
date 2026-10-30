@@ -47,7 +47,7 @@ export class LayaController extends TypertRemoteService {
    * @returns state after the install started.
    */
   @Remote
-  install(): LayaStatusView {
+  installLaya(): LayaStatusView {
     void this.sidecar.install()
     return this.status()
   }
