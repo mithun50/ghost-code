@@ -612,6 +612,8 @@
       "@deepseek-ai/dsh-web-search-duckduckgo": ["./packages/web/web-search-duckduckgo/src"],
       "@deepseek-ai/dsh-laya": ["./packages/extensions/laya/src"],
       "@deepseek-ai/dsh-laya/types": ["./packages/extensions/laya/src/types.ts"],
+      "@deepseek-ai/dsh-local-models": ["./packages/extensions/local-models/src"],
+      "@deepseek-ai/dsh-local-models/types": ["./packages/extensions/local-models/src/types.ts"],
       "@deepseek-ai/dsh-web-search-perplexity": ["./packages/web/web-search-perplexity/src"],
       "@deepseek-ai/dsh-webhook": ["./packages/experimental/webhook/src"],
       "@deepseek-ai/dsh-webhook-github": ["./packages/experimental/webhook-github/src"],

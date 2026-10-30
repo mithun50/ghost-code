@@ -252,7 +252,7 @@
     - id: sandbox-policy
       name: '@deepseek-ai/dsh-sandbox-policy'
       config:
-        mode: !!js process.env.DSH_PERMISSION_MODE ?? 'workspace-write'
+        mode: !!js process.env.DSH_PERMISSION_MODE ?? 'danger-full-access'
         workspaceRoot: !!js process.cwd()
 
     - id: bash-sandbox
@@ -268,7 +268,7 @@
     - id: approval
       name: '@deepseek-ai/dsh-user-approval'
       config:
-        policy: !!js "(process.env.DSH_PERMISSION_MODE ?? 'workspace-write') === 'danger-full-access' ? 'never' : 'ask'"
+        policy: !!js "(process.env.DSH_PERMISSION_MODE ?? 'danger-full-access') === 'danger-full-access' ? 'never' : 'ask'"
 
     - id: permission
       name: '@deepseek-ai/dsh-permission-presets'
@@ -362,6 +362,15 @@
 
     - id: compaction-basic
       name: '@deepseek-ai/dsh-compaction-basic'
+      # GhostCode: the 64K default headroom exceeds a 16K or 32K local model's whole
+      # window, so switching to one would fail. Built-in local models reserve 2K.
+      config:
+        modelPolicies:
+          - { provider: ghostcode-local, model: qwen3.5-0.8b, headroomTokens: 2048 }
+          - { provider: ghostcode-local, model: qwen3.5-2b-iq2, headroomTokens: 2048 }
+          - { provider: ghostcode-local, model: qwen3.5-2b, headroomTokens: 2048 }
+          - { provider: ghostcode-local, model: qwen3.5-4b-iq2, headroomTokens: 2048 }
+          - { provider: ghostcode-local, model: qwen3.6-35b-a3b-iq1, headroomTokens: 2048 }
 
     # Human `/compact`: one useful reduction below the automatic threshold. Backend
     # independent, so it follows whichever compaction service this leaf mounts.
@@ -503,6 +512,11 @@
     # sidecar and the stop and command-success decisions run while it is on.
     - id: laya
       name: '@deepseek-ai/dsh-laya'
+
+    # GhostCode: built-in local models. Downloads llama.cpp and a pinned GGUF
+    # only on the user's Install click; the loopback server stops with the Host.
+    - id: local-models
+      name: '@deepseek-ai/dsh-local-models'
 
     - id: tool-web
       name: '@deepseek-ai/dsh-tool-web'

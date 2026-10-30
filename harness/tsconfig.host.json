@@ -506,6 +506,7 @@
     { "path": "./packages/web/web-search-exa" },
     { "path": "./packages/web/web-search-duckduckgo" },
     { "path": "./packages/extensions/laya" },
+    { "path": "./packages/extensions/local-models" },
     { "path": "./packages/web/web-search-perplexity" },
     { "path": "./packages/web/web-search-deepseek" },
     { "path": "./packages/web/web-deepseek-api" },
