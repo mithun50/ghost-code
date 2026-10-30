@@ -144,7 +144,6 @@ export function HeroShell({ t, renderSlot, children }: HeroShellProps) {
   const [hovering, setHovering] = useState(false)
   return (
     <div className={css.root}>
-      <div className={css.backdrop} aria-hidden="true" />
       <div className={css.stack}>
         <div className={css.headline}>
           {/* figma 34:10412: fish 34×25 leading the headline, gap 10. */}
@@ -167,6 +166,7 @@ export function HeroShell({ t, renderSlot, children }: HeroShellProps) {
           </span>
         </div>
         <p className={css.tagline}>{t('hero.tagline')}</p>
+        <p className={css.subtagline}>{t('hero.subtagline')}</p>
         <div className={css.body}>
           {/* The composer remains mounted outside this component. */}
         </div>

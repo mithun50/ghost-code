@@ -195,6 +195,7 @@ export function ConversationContent(props: ConversationContentProps) {
       data-conversation-region="chat"
       data-content-phase={phase}
     >
+      <div className={css.meadow} aria-hidden="true" />
       <div className={css.scrollBody} data-conversation-scroll="">
         {sessionId === undefined ? null : <Views />}
         {composerSeat}

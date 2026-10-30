@@ -634,3 +634,59 @@
 .embeddedBody[data-content-phase='settling'] .composerSeat {
   visibility: hidden;
 }
+
+/* GhostCode: the meadow photo behind the empty session. It stays mounted for
+   the whole conversation, so the first send fades it out while the transcript
+   rises in, instead of swapping layouts in one frame. */
+.meadow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: url('../assets/hero-meadow.webp') center bottom / cover no-repeat;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 0.7s ease, transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.body[data-content-phase='hero'] > .meadow {
+  opacity: 1;
+  transform: none;
+}
+
+.body > .scrollBody {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero: title in the upper third, composer at the foot, as in the design.
+   The composer then stays put when the session becomes a chat. */
+.composerHero {
+  flex: 1;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+
+.composerHero > :first-child {
+  flex: 1;
+}
+
+.composerHero :global([data-composer-card]) {
+  border-radius: 18px;
+  background: rgba(18, 23, 28, 0.94);
+  box-shadow: 0 18px 48px rgba(4, 10, 24, 0.35);
+}
+
+.body[data-content-phase='active'] .viewArea {
+  animation: chat-enter 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes chat-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meadow { transition: none; }
+  .body[data-content-phase='active'] .viewArea { animation: none; }
+}
