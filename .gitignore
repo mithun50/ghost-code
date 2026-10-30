@@ -1,0 +1,7 @@
+*.log
+*.tar
+shot*.png
+deleted-language-files.txt
+rebrand.mjs
+node_modules/
+
