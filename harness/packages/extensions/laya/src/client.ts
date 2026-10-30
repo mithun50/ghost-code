@@ -66,7 +66,8 @@ export async function askNoul(
     const response = await fetch(`${endpoint.baseURL}/v1/systemone`, {
       method: 'POST',
       headers: { 'content-type': 'application/json', authorization: `Bearer ${endpoint.apiKey}` },
-      body: JSON.stringify({ state: state.slice(0, 20_000), questions: { q: question } }),
+      // Pinned: the sidecar only has the English checkpoint on disk.
+      body: JSON.stringify({ model: 'english', state: state.slice(0, 20_000), questions: { q: question } }),
       signal: AbortSignal.timeout(timeoutMs),
     })
     if (!response.ok) return { latencyMs: elapsed(), error: `laya-serve answered HTTP ${response.status}` }

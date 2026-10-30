@@ -32,10 +32,11 @@ export class LayaController extends TypertRemoteService {
    */
   @Remote
   status(): LayaStatusView {
-    const { state, phase, error } = this.sidecar
+    const { state, phase, progress, error } = this.sidecar
     return {
       state,
       ...phase === undefined ? {} : { phase },
+      ...progress === undefined ? {} : { progress: { done: progress.done, total: progress.total } },
       ...error === undefined ? {} : { error },
       decisionCount: this.log.count,
     }
@@ -48,7 +49,12 @@ export class LayaController extends TypertRemoteService {
    */
   @Remote
   installLaya(): LayaStatusView {
-    void this.sidecar.install()
+    // A finished install turns Laya on, so one click ends with a working engine.
+    void this.sidecar.install().then(async (ok) => {
+      if (!ok) return
+      await this.save(true).catch(() => {})
+      await this.sidecar.start()
+    })
     return this.status()
   }
 

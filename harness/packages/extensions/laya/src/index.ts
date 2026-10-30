@@ -26,7 +26,7 @@ import {
 import { LayaSidecar } from './sidecar.ts'
 
 export { LayaController } from './controller.ts'
-export type { LayaDecision, LayaState, LayaStatusView } from './types.ts'
+export type { LayaDecision, LayaProgress, LayaState, LayaStatusView } from './types.ts'
 
 declare module '@deepseek-ai/dsh-llm' {
   interface MessageSourceMap {

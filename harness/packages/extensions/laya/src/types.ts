@@ -3,11 +3,19 @@
 /** Lifecycle of the local Laya install and its sidecar. */
 export type LayaState = 'not-installed' | 'installing' | 'off' | 'starting' | 'on' | 'error'
 
+/** Bytes downloaded so far during an install step that has a known size. */
+export interface LayaProgress {
+  readonly done: number
+  readonly total: number
+}
+
 /** Redacted plugin state the browser renders. Never carries the sidecar key. */
 export interface LayaStatusView {
   readonly state: LayaState
   /** Human-readable phase while installing or starting. */
   readonly phase?: string
+  /** Download progress, present while a sized download runs. */
+  readonly progress?: LayaProgress
   /** Last failure, when `state` is `error`. */
   readonly error?: string
   /** Decisions recorded since the Host started. */
