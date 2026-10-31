@@ -94,6 +94,17 @@ export function apply(ctx: Context, config: Config): void {
   const manager = new LocalModelManager(root, config.port, ctx.logger)
   const log = new EgressLog(join(root, 'egress.jsonl'))
   const policyFile = join(root, 'guard.json')
+  // Demo switch for hint 3: while `simulate-free-mb` holds a number, GhostCode treats that as free memory.
+  // Delete the file to return to the real value.
+  const simulateFile = join(root, 'simulate-free-mb')
+  const freeMemory = (): number => {
+    try {
+      const mb = Number(readFileSync(simulateFile, 'utf8').trim())
+      return Number.isFinite(mb) && mb >= 0 ? mb * 1_048_576 : freemem()
+    } catch {
+      return freemem()
+    }
+  }
   let policy: StoredPolicy = { cloud: 'allow', escalateTo: '' }
   try { policy = { ...policy, ...JSON.parse(readFileSync(policyFile, 'utf8')) as Partial<StoredPolicy> } } catch { /* defaults */ }
   const guards = new Map<string, SessionGuard>()
@@ -176,7 +187,7 @@ export function apply(ctx: Context, config: Config): void {
         escalateAfter: config.escalateAfter,
         totals: guard.totals(),
         checks: [...guard.checks].slice(-8),
-        freeRam: freemem(),
+        freeRam: freeMemory(),
         ...laya === undefined ? {} : { laya },
       }
     },
@@ -285,7 +296,7 @@ export function apply(ctx: Context, config: Config): void {
     setLiteTools(agent, local !== undefined)
     if (local === undefined) return await next()
     const serving = manager.server.state === 'running' && manager.server.model === local.id
-    const free = freemem()
+    const free = freeMemory()
     // Weights may take WEIGHT_SHARE of free memory; a running model already counts as used.
     const room = (free + (serving ? local.size : 0)) * WEIGHT_SHARE
     let target = local

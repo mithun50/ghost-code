@@ -52,7 +52,8 @@ export const Config = z.object({
   enabled: z.boolean().default(false).volatile(),
   stopThreshold: z.number().min(0).max(1).default(0.5).volatile(),
   commandThreshold: z.number().min(0).max(1).default(0.3).volatile(),
-  timeoutMs: z.number().min(50).default(800).volatile(),
+  // A long reply plus its request takes about 0.8 s to judge on CPU; 800 ms timed most of them out.
+  timeoutMs: z.number().min(50).default(3000).volatile(),
 })
 
 /**
