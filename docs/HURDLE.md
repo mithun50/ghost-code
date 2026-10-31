@@ -57,7 +57,7 @@ Code: the `agent/pre-step` and `agent/request-error` hooks in `src/index.ts`.
 3. **Redaction.** Paste a fake key in a message to a cloud model. The log entry shows `1 secrets redacted`.
 4. **Hint 2.** On the local model, ask it to run a command that fails, such as `npm run build` in a folder with no `package.json`. Watch the failure streak climb. After 3 failures it escalates, and the log shows the evidence. Fix the command; the next pass returns the session to local.
 5. **Privacy mode.** Turn on Privacy mode and send a message to a cloud model. It is blocked, and the log records it.
-6. **Hint 3.** Explained from the panel and the code. The memory check runs before every step.
+6. **Hint 3, live.** On the local Qwen3.5 2B model, run `echo 600 > ~/.ghostcode/local-models/simulate-free-mb` (PowerShell: `Set-Content $HOME\.ghostcode\local-models\simulate-free-mb 600`). GhostCode now treats free memory as 600 MB. Send a message: the next step moves to Qwen3.5 0.8B locally, never to the cloud, and the shield logs a local recovery. Delete the file to return to the real value.
 
 ## Tests
 
