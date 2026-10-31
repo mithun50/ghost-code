@@ -74,7 +74,7 @@ export interface SetupOperations {
 }
 
 /** Output budget for local replies; the server's context window bounds the rest. */
-const LOCAL_MAX_TOKENS = 8192
+const LOCAL_MAX_TOKENS = 32_768
 
 /** Unwrap a Remote outcome or throw its message. */
 async function settle<T>(call: Promise<RemoteResult<T>>): Promise<T> {
