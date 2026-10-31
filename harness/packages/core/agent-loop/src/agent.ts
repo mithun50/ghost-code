@@ -365,12 +365,11 @@ export class ReactLoopAgent implements Agent {
             if (session === this.session) toolRecovery.observe(event)
           })
           try {
-            // max-tokens is sticky: once any step hits the ceiling, later steps
-            // that complete normally must not downgrade the turn outcome.
             const stepEnd = await this.step(decision)
-            // max-tokens stays sticky: a later completed step must not
-            // downgrade the turn outcome.
-            if (turnEnds === null || turnEnds.kind !== 'max-tokens') turnEnds = stepEnd
+            // GhostCode: the last step decides. A reply cut off at the output
+            // limit and then continued to completion (auto-continue) ends the
+            // turn completed, so no stale "limit reached" notice is shown.
+            turnEnds = stepEnd
           } catch (error: unknown) {
             try {
               for (const event of toolRecovery.results()) {
