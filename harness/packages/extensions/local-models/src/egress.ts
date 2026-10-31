@@ -31,6 +31,65 @@ function looksSecret(value: string): boolean {
   return value.length >= 16 || (value.length >= 8 && /\d/.test(value) && /[A-Za-z]/.test(value))
 }
 
+/** Verhoeff check digit tables, used to confirm a 12-digit number is a real Aadhaar number. */
+const VERHOEFF_D = [
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 0, 6, 7, 8, 9, 5], [2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+  [3, 4, 0, 1, 2, 8, 9, 5, 6, 7], [4, 0, 1, 2, 3, 9, 5, 6, 7, 8], [5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+  [6, 5, 9, 8, 7, 1, 0, 4, 3, 2], [7, 6, 5, 9, 8, 2, 1, 0, 4, 3], [8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+  [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+]
+const VERHOEFF_P = [
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 5, 7, 6, 2, 8, 3, 0, 9, 4], [5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+  [8, 9, 1, 6, 0, 4, 3, 5, 2, 7], [9, 4, 5, 3, 1, 2, 6, 8, 7, 0], [4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+  [2, 7, 9, 3, 8, 0, 6, 4, 1, 5], [7, 0, 4, 6, 9, 1, 3, 2, 5, 8],
+]
+
+/**
+ * Whether a digit string passes the Verhoeff check (Aadhaar's checksum).
+ * @param digits - digits only.
+ * @returns true when the last digit is the correct check digit.
+ */
+export function verhoeffValid(digits: string): boolean {
+  let c = 0
+  const reversed = [...digits].reverse()
+  for (let i = 0; i < reversed.length; i++) {
+    c = VERHOEFF_D[c]![VERHOEFF_P[i % 8]![Number(reversed[i])]!]!
+  }
+  return c === 0
+}
+
+/**
+ * Whether a digit string passes the Luhn check (payment card numbers).
+ * @param digits - digits only.
+ * @returns true for a valid card number checksum.
+ */
+export function luhnValid(digits: string): boolean {
+  let sum = 0
+  for (let i = 0; i < digits.length; i++) {
+    let d = Number(digits[digits.length - 1 - i])
+    if (i % 2 === 1) { d *= 2; if (d > 9) d -= 9 }
+    sum += d
+  }
+  return sum % 10 === 0
+}
+
+/**
+ * Personal data that must not leave the machine (India first: Aadhaar, PAN, UPI, phone; plus cards and email).
+ * Numbers are confirmed by their checksum, so ordinary 12 or 16 digit numbers in code are left alone.
+ */
+const PERSONAL_RULES: ReadonlyArray<{ kind: string, re: RegExp, valid?: (match: string) => boolean }> = [
+  // Cards first: a 16-digit card number must not be half-matched as an Aadhaar number.
+  { kind: 'card-number', re: /\b(?:\d{4}[ -]?){3}\d{1,4}\b/g, valid: (m) => {
+    const digits = m.replace(/\D/g, '')
+    return digits.length >= 13 && digits.length <= 16 && /^[2-6]/.test(digits) && luhnValid(digits)
+  } },
+  { kind: 'aadhaar', re: /\b[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}\b/g, valid: m => verhoeffValid(m.replace(/\D/g, '')) },
+  { kind: 'pan', re: /\b[A-Z]{3}[PCHFATBLJG][A-Z]\d{4}[A-Z]\b/g },
+  { kind: 'upi-id', re: /\b[\w.-]{2,}@(?:ok(?:axis|hdfcbank|icici|sbi)|ybl|ibl|axl|apl|paytm|upi|oksbi|waaxis|wahdfcbank|jupiteraxis|fbl)\b/gi },
+  { kind: 'phone', re: /(?:\+91[ -]?|\b0?)[6-9]\d{4}[ -]?\d{5}\b/g },
+  { kind: 'email', re: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}\b/g, valid: m => !/@(?:example\.(?:com|org|net)|users\.noreply\.github\.com|anthropic\.com)$/i.test(m) },
+]
+
 /** Result of one redaction pass. */
 export interface Redaction {
   readonly text: string
@@ -58,6 +117,13 @@ export function redactText(text: string): Redaction {
     found.push('assigned-secret')
     return `${head}[REDACTED:secret]`
   })
+  for (const { kind, re, valid } of PERSONAL_RULES) {
+    out = out.replace(re, (match: string) => {
+      if (valid !== undefined && !valid(match)) return match
+      found.push(kind)
+      return `[REDACTED:${kind}]`
+    })
+  }
   return { text: out, found }
 }
 
