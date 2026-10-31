@@ -263,7 +263,8 @@
 
 /* The latest Laya decision, shown on every prompt while Laya is on. */
 .decision {
-  max-width: 260px;
+  max-width: 340px;
+  flex-shrink: 0;
   margin-left: 4px;
   padding: 2px 8px;
   overflow: hidden;

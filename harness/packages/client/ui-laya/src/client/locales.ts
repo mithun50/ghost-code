@@ -54,10 +54,10 @@ export const en = {
   'decision.label': 'Laya: {verdict} ({percent}%, {ms} ms)',
   'decision.title': 'Last Laya decision. Question: {question}',
   'decision.stop': 'task done',
-  'decision.continue': 'not done, asked the model to verify',
-  'decision.flag-failure': 'command failed, told the model',
-  'decision.pass': 'command succeeded',
-  'decision.abstain': 'unsure, no action',
+  'decision.continue': 'checking again',
+  'decision.flag-failure': 'command failed',
+  'decision.pass': 'command ok',
+  'decision.abstain': 'unsure',
   'progress.bytes': '{done} of {total} MB ({percent}%)',
 } satisfies Record<string, string>
 
