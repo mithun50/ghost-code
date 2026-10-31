@@ -18,7 +18,7 @@ A clinic, a law firm or an accountant cannot paste this file into a cloud chatbo
 3. The agent runs `analyse.mjs` in the terminal tool and summarises the totals. On the demo laptop this took about 100 seconds and every number matched the table below.
 4. Open the shield. The panel shows 0 cloud requests and 0 bytes sent.
 
-`analyse.mjs` is part of this demo kit: it only aggregates, so the model never sees a single identifier, even locally. A 2B model writing the whole analysis from scratch took over 10 minutes in testing and still had a bug, so the reliable live demo is "run and explain". With a larger local model or an escalated cloud model, ask it to write the script itself.
+`analyse.mjs` is part of this demo kit and prints only totals, so the summary contains no identifiers. The model runs locally, so even if it opens `patients.csv` itself, nothing leaves the machine. A 2B model writing the whole analysis from scratch took over 10 minutes in testing and still had a bug, so the reliable live demo is "run and explain". With a larger local model or an escalated cloud model, ask it to write the script itself.
 
 ## Patterns in the data (to check the answer)
 
