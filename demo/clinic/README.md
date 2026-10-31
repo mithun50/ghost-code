@@ -11,12 +11,14 @@ A clinic, a law firm or an accountant cannot paste this file into a cloud chatbo
 ## Steps
 
 1. Pick `GhostCode Local / Qwen3.5 2B`. The shield says `On device`. Optionally turn Wi-Fi off.
-2. Set the workspace to this folder and send:
+2. Set the workspace to this folder (`demo/clinic`) and send:
 
-   > Read patients.csv. Write analyse.mjs that uses only Node built-ins to print: visits per diagnosis, average bill per department, the share of Type 2 diabetes patients over 50 and in Bengaluru, dengue and viral fever visits by month, payment method counts, and patients who visited more than once (count unique Aadhaar numbers, print only how many). Run it, then summarise the patterns in five bullet points. Do not print any name, Aadhaar, PAN, phone, email, UPI ID or card number.
+   > Run node analyse.mjs in this folder. It reads patients.csv, which holds private patient records, and prints only totals. Then summarise the patterns in five short bullet points with the numbers. Do not open patients.csv yourself.
 
-3. The agent writes `analyse.mjs`, runs it with `node`, and summarises the result.
+3. The agent runs `analyse.mjs` in the terminal tool and summarises the totals. On the demo laptop this took about 100 seconds and every number matched the table below.
 4. Open the shield. The panel shows 0 cloud requests and 0 bytes sent.
+
+`analyse.mjs` is part of this demo kit: it only aggregates, so the model never sees a single identifier, even locally. A 2B model writing the whole analysis from scratch took over 10 minutes in testing and still had a bug, so the reliable live demo is "run and explain". With a larger local model or an escalated cloud model, ask it to write the script itself.
 
 ## Patterns in the data (to check the answer)
 

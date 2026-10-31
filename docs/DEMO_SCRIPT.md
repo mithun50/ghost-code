@@ -50,7 +50,7 @@ Open the shield panel. Explain the three sections, one per hint:
 
 ### 4b. Beyond code: private patient data (1 min)
 
-"Coding is how we demo it, but the real product is an agent that works on data that cannot leave the building." Open `demo/clinic/patients.csv`: 100 synthetic clinic visits with Aadhaar, PAN, phone, UPI and card numbers. Send the prompt from [demo/clinic/README.md](../demo/clinic/README.md). The local model writes `analyse.mjs`, runs it and summarises the patterns: diabetes in patients over 50, a monsoon spike in dengue and viral fever, cardiology bills about 4 times higher than any other department. The shield shows 0 bytes sent.
+"Coding is how we demo it, but the real product is an agent that works on data that cannot leave the building." Open `demo/clinic/patients.csv`: 100 synthetic clinic visits with Aadhaar, PAN, phone, UPI and card numbers. Send the prompt from [demo/clinic/README.md](../demo/clinic/README.md). The local model runs `analyse.mjs` (part of the demo kit, it prints only totals) and summarises the patterns in about 100 seconds: diabetes in patients over 50, a monsoon spike in dengue and viral fever, cardiology bills about 4 times higher than any other department. The shield shows 0 bytes sent.
 
 Then say: "If this session ever escalated, here is what the cloud would see." Show the redacted row in the clinic README: every Aadhaar, PAN, phone, email, UPI ID and card number is replaced. Aadhaar is checked with its Verhoeff checksum and cards with Luhn, so ordinary numbers in code are left alone.
 
