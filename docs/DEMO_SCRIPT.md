@@ -48,6 +48,12 @@ Open the shield panel. Explain the three sections, one per hint:
 2. **Escalate only on evidence.** Every shell command is judged on its exit code and error output. Only 3 failed checks in a row move the session to the cloud. A hard-looking question never does. One passing check moves it back.
 3. **Running out of resources.** Before each local step, free RAM is checked. If the model no longer fits, the session moves to a smaller local model, not the cloud. If the server crashes, it restarts locally. If nothing fits, the task pauses with a message.
 
+### 4b. Beyond code: private patient data (1 min)
+
+"Coding is how we demo it, but the real product is an agent that works on data that cannot leave the building." Open `demo/clinic/patients.csv`: 100 synthetic clinic visits with Aadhaar, PAN, phone, UPI and card numbers. Send the prompt from [demo/clinic/README.md](../demo/clinic/README.md). The local model writes `analyse.mjs`, runs it and summarises the patterns: diabetes in patients over 50, a monsoon spike in dengue and viral fever, cardiology bills about 4 times higher than any other department. The shield shows 0 bytes sent.
+
+Then say: "If this session ever escalated, here is what the cloud would see." Show the redacted row in the clinic README: every Aadhaar, PAN, phone, email, UPI ID and card number is replaced. Aadhaar is checked with its Verhoeff checksum and cards with Luhn, so ordinary numbers in code are left alone.
+
 ### 5. Laya, measured (45 s)
 
 "Laya is a 421M decision model that answers yes or no questions about the agent's state. We benchmarked it on 32 hand-written cases. For 'did this command succeed', exit code first and Laya as tie-breaker scores 90%, against 85% for rules alone and 75% for Laya alone. For 'is the task done', Laya scores 67% against 50% for stopping blindly." Then show `docs/BENCHMARK.md`.

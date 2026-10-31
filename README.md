@@ -1,6 +1,6 @@
 # GhostCode
 
-An offline-first AI coding agent for laptops and phones.
+An offline-first AI coding agent for laptops.
 
 GhostCode runs open models on the hardware you already own. It works with no
 network, and your code stays on your machine. When the device is too small for
@@ -57,6 +57,7 @@ Click the shield badge in the composer. See [docs/HURDLE.md](docs/HURDLE.md) for
 - [Hurdle: Never Leak, Verify Before Escalating](docs/HURDLE.md): what each hint maps to, and a demo script
 - [Benchmarks](docs/BENCHMARK.md): Laya accuracy, local model speed, cloud vs local website build
 - [Demo script and repo walkthrough](docs/DEMO_SCRIPT.md): talk track for judges
+- [Clinic demo](demo/clinic/README.md): 100 synthetic patient records with Aadhaar, PAN and UPI, analysed on the laptop
 - [AGENTS.md](AGENTS.md): instructions for coding agents working in this repo
 
 ## Layout

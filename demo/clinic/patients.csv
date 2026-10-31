@@ -1,0 +1,101 @@
+visit_id,name,age,gender,city,aadhaar,pan,phone,email,visit_date,department,diagnosis,blood_pressure,fasting_sugar_mg_dl,bill_inr,payment_method,payment_ref,insured
+NL-1001,Priya Reddy,69,F,Bengaluru,6370 0353 1705,NUOPR9618R,+91 84783 27909,priya.reddy16@mailbox.in,2026-09-24,Endocrinology,Type 2 diabetes,133/86,284,4450,UPI,priya.reddy16@okicici,Yes
+NL-1002,Arjun Iyer,43,M,Hubballi,8965 7463 6410,EYEPI9536S,+91 89800 32382,arjun.iyer43@mailbox.in,2026-04-03,Neurology,Migraine,125/76,101,3350,UPI,arjun.iyer43@paytm,Yes
+NL-1003,Pooja Patel,75,F,Bengaluru,7254 9129 9034,DVLPP8453E,+91 74963 63259,pooja.patel82@mailbox.in,2026-09-15,Pulmonology,Asthma,134/89,121,4100,Card,4832 5519 4834 3585,Yes
+NL-1004,Divya Rao,22,F,Bengaluru,5596 4172 2679,ORZPR4120O,+91 71240 79475,divya.rao57@mailbox.in,2026-07-28,General Medicine,Dengue,128/86,89,1750,Card,4538 3913 6777 2403,Yes
+NL-1005,Manoj Joshi,77,M,Mysuru,8650 0232 6255,UQKPJ4842R,+91 97956 07305,manoj.joshi81@mailbox.in,2026-04-14,Endocrinology,Type 2 diabetes,121/85,205,2850,Card,4492 1757 5171 2065,No
+NL-1006,Priya Joshi,34,F,Bengaluru,7863 1558 4089,AZJPJ6203F,+91 80187 73319,priya.joshi66@mailbox.in,2026-03-12,Endocrinology,Thyroid disorder,123/92,121,2400,Card,4066 0228 2537 7580,No
+NL-1007,Sanjay Joshi,63,M,Bengaluru,6579 9216 1339,FPQPJ1465Z,+91 77925 41197,sanjay.joshi84@mailbox.in,2026-06-11,Endocrinology,Type 2 diabetes,112/91,201,5050,UPI,sanjay.joshi84@oksbi,No
+NL-1008,Lakshmi Reddy,68,F,Mangaluru,4163 3218 9536,FUAPR0548Z,+91 90493 65883,lakshmi.reddy90@mailbox.in,2026-05-02,Endocrinology,Type 2 diabetes,129/78,230,2600,UPI,lakshmi.reddy90@paytm,No
+NL-1009,Rohan Kulkarni,19,M,Bengaluru,9190 0390 1501,CNNPK0060U,+91 98402 89558,rohan.kulkarni92@mailbox.in,2026-05-06,Orthopedics,Back pain,126/89,86,4550,Cash,,No
+NL-1010,Naveen Iyer,48,M,Mysuru,8828 8304 1175,AGLPI2589A,+91 86874 10754,naveen.iyer7@mailbox.in,2026-04-07,Endocrinology,Thyroid disorder,127/75,80,2500,UPI,naveen.iyer7@paytm,Yes
+NL-1011,Kavya Iyer,56,F,Mangaluru,6923 5962 2878,REXPI1735V,+91 96976 36228,kavya.iyer90@mailbox.in,2026-02-24,Endocrinology,Type 2 diabetes,124/81,265,5500,Card,4328 8229 7886 5263,Yes
+NL-1012,Manoj Nair,81,M,Mysuru,5554 6453 1807,TAQPN4946D,+91 70653 43587,manoj.nair83@mailbox.in,2026-09-17,Endocrinology,Thyroid disorder,116/71,83,3250,Cash,,Yes
+NL-1013,Sneha Nair,69,F,Bengaluru,8524 5428 6378,PKOPN2055L,+91 94072 18669,sneha.nair30@mailbox.in,2026-01-24,Endocrinology,Type 2 diabetes,122/78,202,5650,Card,4436 6216 0277 4357,No
+NL-1014,Meera Joshi,56,F,Bengaluru,9641 8224 7304,KCZPJ2558S,+91 72243 75975,meera.joshi28@mailbox.in,2026-09-18,Endocrinology,Type 2 diabetes,118/72,208,4400,Cash,,No
+NL-1015,Vikram Patel,30,M,Hubballi,9926 1833 6181,JHPPP4594Z,+91 95616 75084,vikram.patel29@mailbox.in,2026-07-20,General Medicine,Dengue,126/76,81,2750,UPI,vikram.patel29@okicici,No
+NL-1016,Lakshmi Iyer,56,F,Mysuru,7181 9120 6460,ABAPI1409I,+91 92345 97512,lakshmi.iyer16@mailbox.in,2026-01-15,Endocrinology,Thyroid disorder,123/87,95,5800,Cash,,No
+NL-1017,Manoj Sharma,51,M,Hubballi,9668 3948 9987,OASPS0609A,+91 78041 50324,manoj.sharma64@mailbox.in,2026-09-28,Endocrinology,Thyroid disorder,118/83,85,2950,UPI,manoj.sharma64@ybl,No
+NL-1018,Anjali Hegde,55,F,Tumakuru,9570 1496 0171,USUPH4026R,+91 86220 89033,anjali.hegde53@mailbox.in,2026-02-11,Neurology,Migraine,131/80,96,2300,Cash,,No
+NL-1019,Ganesh Menon,69,M,Bengaluru,4989 6162 9616,YNEPM7003R,+91 71565 14316,ganesh.menon55@mailbox.in,2026-05-23,Cardiology,Coronary artery disease,147/89,112,9150,Card,4118 5889 1914 3508,Yes
+NL-1020,Divya Iyer,60,F,Bengaluru,6411 6068 6516,FCCPI0051L,+91 99131 97048,divya.iyer95@mailbox.in,2026-04-02,Endocrinology,Type 2 diabetes,131/72,270,2350,Cash,,No
+NL-1021,Suresh Sharma,54,M,Mysuru,7868 6419 4314,HTXPS5672X,+91 84025 36930,suresh.sharma32@mailbox.in,2026-05-14,Orthopedics,Back pain,130/93,101,7750,UPI,suresh.sharma32@oksbi,No
+NL-1022,Aditya Menon,65,M,Bengaluru,2032 9298 3611,IXSPM5653H,+91 89047 09774,aditya.menon69@mailbox.in,2026-04-13,Cardiology,Hypertension,167/70,115,39850,UPI,aditya.menon69@okhdfcbank,Yes
+NL-1023,Karthik Patel,49,M,Mysuru,2741 3431 3374,WRLPP3911T,+91 86026 37682,karthik.patel4@mailbox.in,2026-07-15,General Medicine,Viral fever,109/82,100,1650,Card,4398 6936 4010 4760,No
+NL-1024,Shruti Shetty,34,F,Bengaluru,6607 4252 1039,LJEPS1413K,+91 84642 79725,shruti.shetty80@mailbox.in,2026-09-02,Pulmonology,Allergic rhinitis,116/82,126,5000,Card,4868 0101 4677 3546,Yes
+NL-1025,Arjun Iyer,27,M,Mangaluru,8652 0723 2434,RJKPI0041O,+91 84763 85152,arjun.iyer6@mailbox.in,2026-08-23,Neurology,Migraine,123/72,91,3900,UPI,arjun.iyer6@okicici,Yes
+NL-1026,Ganesh Gowda,18,M,Bengaluru,5869 9959 2915,VVOPG8723V,+91 83961 16417,ganesh.gowda37@mailbox.in,2026-09-16,Endocrinology,Thyroid disorder,110/86,116,1950,UPI,ganesh.gowda37@oksbi,No
+NL-1027,Sneha Joshi,69,F,Bengaluru,2030 9922 3782,QCKPJ7522Y,+91 78891 27308,sneha.joshi49@mailbox.in,2026-04-16,Pulmonology,Asthma,109/76,105,2200,Cash,,No
+NL-1028,Lakshmi Menon,62,F,Bengaluru,5410 7603 0318,BUFPM9173M,+91 75337 80919,lakshmi.menon51@mailbox.in,2026-04-10,Cardiology,Hypertension,163/83,106,21300,Card,4774 6816 1757 4200,Yes
+NL-1029,Pooja Nair,69,F,Mangaluru,9984 4253 7523,XNNPN4479H,+91 72678 44249,pooja.nair13@mailbox.in,2026-08-26,General Medicine,Viral fever,111/93,114,2100,UPI,pooja.nair13@oksbi,Yes
+NL-1030,Rekha Gowda,20,F,Hubballi,9741 4780 6138,IWLPG5711N,+91 72237 66411,rekha.gowda57@mailbox.in,2026-04-01,Pulmonology,Asthma,120/92,112,2250,UPI,rekha.gowda57@okhdfcbank,No
+NL-1031,Pooja Hegde,27,F,Mangaluru,8934 7881 6783,UUKPH9669N,+91 71405 97863,pooja.hegde57@mailbox.in,2026-06-26,General Medicine,Viral fever,128/95,126,4250,Cash,,No
+NL-1032,Shruti Gowda,77,F,Bengaluru,2494 8522 8215,ATXPG5045F,+91 85106 99030,shruti.gowda6@mailbox.in,2026-09-20,Cardiology,Hypertension,156/88,119,12700,Card,4953 0499 8065 2313,Yes
+NL-1033,Arjun Patel,44,M,Hubballi,5975 4519 2818,GLBPP5720F,+91 86242 84207,arjun.patel57@mailbox.in,2026-07-01,General Medicine,Viral fever,129/88,117,2350,Cash,,No
+NL-1034,Nandini Reddy,62,F,Hubballi,4153 4339 4452,LSXPR2101N,+91 91301 77221,nandini.reddy5@mailbox.in,2026-06-08,General Medicine,Viral fever,130/83,117,1350,UPI,nandini.reddy5@okicici,No
+NL-1035,Pooja Joshi,42,F,Bengaluru,9771 9452 7802,UUCPJ3057V,+91 94449 05792,pooja.joshi31@mailbox.in,2026-07-11,Neurology,Migraine,134/90,114,2550,UPI,pooja.joshi31@ybl,No
+NL-1036,Rahul Iyer,64,M,Mysuru,7665 0662 0783,LNFPI9928Q,+91 83239 99320,rahul.iyer75@mailbox.in,2026-07-24,General Medicine,Viral fever,109/75,123,2650,Cash,,Yes
+NL-1037,Nandini Rao,35,F,Hubballi,9731 2875 0938,WSSPR9677E,+91 97234 69570,nandini.rao39@mailbox.in,2026-03-01,Pulmonology,Allergic rhinitis,126/79,85,2400,UPI,nandini.rao39@oksbi,Yes
+NL-1038,Meera Patel,32,F,Bengaluru,8099 5417 7775,EAZPP7676X,+91 75888 96737,meera.patel68@mailbox.in,2026-06-25,Gastroenterology,Gastritis,123/77,81,4400,Cash,,No
+NL-1039,Naveen Kulkarni,39,M,Bengaluru,6288 8671 7757,RLCPK8916A,+91 88130 18829,naveen.kulkarni65@mailbox.in,2026-07-02,General Medicine,Dengue,107/74,124,1650,UPI,naveen.kulkarni65@okicici,No
+NL-1040,Manoj Sharma,42,M,Tumakuru,3942 3440 1476,DZFPS7622W,+91 80056 35661,manoj.sharma14@mailbox.in,2026-08-10,General Medicine,Viral fever,121/86,113,2300,Card,4655 5345 4191 9690,No
+NL-1041,Kavya Patel,71,F,Bengaluru,7667 8666 4409,GYVPP2236R,+91 91982 69638,kavya.patel91@mailbox.in,2026-05-13,Endocrinology,Type 2 diabetes,128/92,243,2800,UPI,kavya.patel91@okhdfcbank,No
+NL-1042,Anjali Rao,49,F,Hubballi,4136 7765 5191,ZMDPR3101C,+91 92994 47475,anjali.rao81@mailbox.in,2026-04-20,Cardiology,Hypertension,162/80,93,15550,Card,4791 2858 3536 1884,Yes
+NL-1043,Naveen Joshi,30,M,Mangaluru,7442 1187 0092,UMQPJ6648W,+91 75447 34682,naveen.joshi9@mailbox.in,2026-03-01,Pulmonology,Allergic rhinitis,114/71,105,1300,Cash,,No
+NL-1044,Shruti Sharma,25,F,Tumakuru,5001 2511 0329,CNTPS4276L,+91 87420 52497,shruti.sharma28@mailbox.in,2026-05-19,Neurology,Migraine,120/95,122,5250,UPI,shruti.sharma28@okicici,No
+NL-1045,Karthik Kulkarni,52,M,Mysuru,6415 3478 4809,ZEZPK8248U,+91 94535 59965,karthik.kulkarni39@mailbox.in,2026-05-22,Pulmonology,Asthma,106/71,129,4450,Card,4325 6229 5188 8123,No
+NL-1046,Naveen Menon,59,M,Bengaluru,5489 6935 0864,HESPM1887G,+91 94148 85429,naveen.menon16@mailbox.in,2026-01-20,Cardiology,Coronary artery disease,150/73,128,30450,Card,4043 8201 3770 4013,Yes
+NL-1047,Karthik Patel,61,M,Bengaluru,4745 1013 7385,WTYPP6810S,+91 74281 81425,karthik.patel26@mailbox.in,2026-04-14,Endocrinology,Type 2 diabetes,124/74,252,3350,UPI,karthik.patel26@okicici,No
+NL-1048,Sanjay Joshi,64,M,Hubballi,8549 7465 3774,REPPJ5740O,+91 84856 02488,sanjay.joshi45@mailbox.in,2026-03-20,Gastroenterology,Gastritis,116/71,82,5150,Cash,,No
+NL-1049,Rahul Kulkarni,63,M,Bengaluru,6461 5369 1762,LTUPK8281B,+91 90769 86587,rahul.kulkarni77@mailbox.in,2026-07-01,Endocrinology,Type 2 diabetes,124/74,202,1750,UPI,rahul.kulkarni77@okicici,Yes
+NL-1050,Vikram Menon,60,M,Tumakuru,2526 6117 6933,CFVPM6115K,+91 71089 73851,vikram.menon25@mailbox.in,2026-06-13,Endocrinology,Type 2 diabetes,131/73,208,4500,UPI,vikram.menon25@okhdfcbank,Yes
+NL-1051,Aditya Menon,55,M,Bengaluru,3837 8644 5272,LFEPM0858L,+91 89902 46266,aditya.menon72@mailbox.in,2026-09-28,Endocrinology,Type 2 diabetes,105/80,253,1500,UPI,aditya.menon72@okhdfcbank,No
+NL-1052,Rohan Nair,24,M,Bengaluru,7229 2528 3108,COOPN2744T,+91 85718 59962,rohan.nair42@mailbox.in,2026-07-05,General Medicine,Dengue,113/73,112,2900,Card,4147 3437 2232 7228,No
+NL-1053,Pooja Gowda,32,F,Mysuru,2650 2596 1196,SUYPG4143X,+91 89460 81082,pooja.gowda34@mailbox.in,2026-05-18,Gastroenterology,Gastritis,132/94,121,5600,UPI,pooja.gowda34@oksbi,No
+NL-1054,Arjun Hegde,36,M,Bengaluru,2499 2228 5171,CCQPH2943W,+91 85078 61369,arjun.hegde91@mailbox.in,2026-07-25,General Medicine,Viral fever,107/83,108,3950,UPI,arjun.hegde91@paytm,No
+NL-1055,Karthik Joshi,76,M,Mysuru,5348 1481 7323,GSTPJ0431L,+91 81593 71916,karthik.joshi85@mailbox.in,2026-03-26,Endocrinology,Type 2 diabetes,128/79,162,3400,UPI,karthik.joshi85@paytm,No
+NL-1056,Aditya Sharma,60,M,Tumakuru,5409 0064 9341,YLSPS6618T,+91 87321 95217,aditya.sharma10@mailbox.in,2026-08-02,General Medicine,Viral fever,135/79,104,3450,Card,4323 8590 1088 8718,No
+NL-1057,Pooja Nair,53,F,Bengaluru,3122 4520 3601,GKFPN6334L,+91 71596 72383,pooja.nair32@mailbox.in,2026-02-20,Orthopedics,Back pain,135/78,107,7000,Cash,,No
+NL-1058,Anjali Iyer,63,F,Bengaluru,3263 1104 2623,RAOPI8712B,+91 79225 71732,anjali.iyer78@mailbox.in,2026-07-19,Endocrinology,Type 2 diabetes,110/85,164,3250,Card,4586 0650 5865 1610,No
+NL-1059,Sanjay Kulkarni,50,M,Mysuru,9853 4773 0440,CCWPK3962Y,+91 90401 31823,sanjay.kulkarni84@mailbox.in,2026-09-19,Cardiology,Hypertension,167/72,88,11050,Card,4648 5343 9202 8518,No
+NL-1060,Karthik Menon,56,M,Mangaluru,3953 7393 3222,ZMIPM7681N,+91 89048 17543,karthik.menon10@mailbox.in,2026-07-13,Cardiology,Hypertension,167/73,95,38150,Card,4058 7572 2750 6290,Yes
+NL-1061,Sneha Hegde,49,F,Tumakuru,2813 2778 7623,EQHPH4000F,+91 82394 17290,sneha.hegde72@mailbox.in,2026-04-13,Cardiology,Hypertension,166/72,127,24700,Card,4684 8976 6066 0782,No
+NL-1062,Rekha Kulkarni,25,F,Bengaluru,8550 8221 5380,CIPPK3379T,+91 93685 68968,rekha.kulkarni73@mailbox.in,2026-02-05,Pulmonology,Allergic rhinitis,125/90,104,3350,UPI,rekha.kulkarni73@paytm,No
+NL-1063,Kavya Kulkarni,41,F,Mangaluru,8740 8130 8107,SQHPK6211K,+91 80883 05038,kavya.kulkarni72@mailbox.in,2026-08-20,Gastroenterology,Gastritis,106/74,108,1850,UPI,kavya.kulkarni72@oksbi,Yes
+NL-1064,Rahul Rao,43,M,Bengaluru,3566 8147 0887,PYVPR3967O,+91 86215 13247,rahul.rao86@mailbox.in,2026-05-11,Gastroenterology,Gastritis,115/86,95,2450,Cash,,No
+NL-1065,Sanjay Patel,42,M,Tumakuru,6044 8217 7398,GGYPP9647W,+91 98976 63358,sanjay.patel30@mailbox.in,2026-02-17,Neurology,Migraine,106/89,116,5650,Cash,,No
+NL-1066,Nandini Nair,69,F,Hubballi,9818 9188 8344,KIYPN1373V,+91 71730 62550,nandini.nair31@mailbox.in,2026-04-02,Cardiology,Coronary artery disease,146/87,93,20150,Card,4262 0325 5885 6934,Yes
+NL-1067,Meera Nair,23,F,Hubballi,8474 1589 1735,QMIPN2696O,+91 81916 31422,meera.nair55@mailbox.in,2026-04-25,Neurology,Migraine,110/73,81,7600,Card,4521 6500 8123 8275,No
+NL-1068,Lakshmi Shetty,41,F,Hubballi,9471 9290 2745,BRAPS1543N,+91 74621 82449,lakshmi.shetty9@mailbox.in,2026-07-20,General Medicine,Viral fever,111/75,100,850,UPI,lakshmi.shetty9@oksbi,Yes
+NL-1069,Asha Reddy,19,F,Mysuru,7214 2213 3859,FLRPR0706F,+91 78445 55975,asha.reddy12@mailbox.in,2026-07-09,Endocrinology,Thyroid disorder,134/88,105,4350,UPI,asha.reddy12@okhdfcbank,No
+NL-1070,Arjun Rao,73,M,Bengaluru,3116 7430 8094,AMTPR6975W,+91 76002 57067,arjun.rao60@mailbox.in,2026-07-17,General Medicine,Viral fever,109/83,122,3200,UPI,arjun.rao60@okicici,Yes
+NL-1071,Vikram Nair,22,M,Hubballi,2427 2492 4295,AIOPN0097J,+91 79922 38807,vikram.nair99@mailbox.in,2026-08-23,General Medicine,Dengue,118/90,110,1350,UPI,vikram.nair99@ybl,Yes
+NL-1072,Arjun Kulkarni,37,M,Bengaluru,5736 3054 8256,TLKPK6645E,+91 92979 65200,arjun.kulkarni31@mailbox.in,2026-05-06,Endocrinology,Thyroid disorder,121/75,123,4350,Cash,,Yes
+NL-1073,Manoj Iyer,57,M,Bengaluru,9609 8049 4824,OWLPI9019R,+91 75415 08699,manoj.iyer62@mailbox.in,2026-05-13,Endocrinology,Type 2 diabetes,135/94,263,5600,UPI,manoj.iyer62@okhdfcbank,Yes
+NL-1074,Kavya Hegde,62,F,Bengaluru,5228 3789 0943,IJMPH2732I,+91 74977 34033,kavya.hegde1@mailbox.in,2026-09-15,Pulmonology,Asthma,122/81,86,2100,Card,4109 4737 8319 3221,Yes
+NL-1075,Asha Gowda,74,F,Bengaluru,4920 9102 6653,NZBPG3112N,+91 99145 71580,asha.gowda55@mailbox.in,2026-02-21,Cardiology,Hypertension,175/71,108,26650,Cash,,Yes
+NL-1076,Anjali Iyer,55,F,Bengaluru,4447 4859 4420,TRVPI6330D,+91 89023 69226,anjali.iyer75@mailbox.in,2026-07-05,Orthopedics,Back pain,108/95,80,3450,UPI,anjali.iyer75@okhdfcbank,Yes
+NL-1077,Priya Sharma,25,F,Bengaluru,2333 1679 3303,CUVPS2006O,+91 77956 23294,priya.sharma45@mailbox.in,2026-03-10,Pulmonology,Allergic rhinitis,126/82,114,3000,UPI,priya.sharma45@oksbi,Yes
+NL-1078,Priya Joshi,72,F,Bengaluru,6349 3655 6014,QLQPJ1794O,+91 90287 16471,priya.joshi64@mailbox.in,2026-03-28,Endocrinology,Type 2 diabetes,121/93,215,4350,Cash,,Yes
+NL-1079,Pooja Shetty,23,F,Bengaluru,6109 9573 5578,BUTPS2810C,+91 91780 05542,pooja.shetty93@mailbox.in,2026-04-22,Pulmonology,Allergic rhinitis,120/82,116,4650,UPI,pooja.shetty93@oksbi,Yes
+NL-1080,Vikram Reddy,51,M,Bengaluru,2453 8536 0856,OECPR1742N,+91 92833 20791,vikram.reddy15@mailbox.in,2026-07-15,Pulmonology,Asthma,133/93,109,2500,UPI,vikram.reddy15@paytm,Yes
+NL-1081,Sneha Kulkarni,37,F,Bengaluru,3987 4810 6945,ZMLPK9641B,+91 70826 06123,sneha.kulkarni94@mailbox.in,2026-07-12,General Medicine,Dengue,134/77,86,1300,UPI,sneha.kulkarni94@oksbi,No
+NL-1082,Meera Gowda,39,F,Bengaluru,5026 9331 5400,HMSPG0996Y,+91 93105 92150,meera.gowda42@mailbox.in,2026-05-15,Pulmonology,Allergic rhinitis,124/81,91,4200,Card,4283 2420 3941 0079,No
+NL-1083,Manoj Joshi,77,M,Mysuru,8650 0232 6255,UQKPJ4842R,+91 97956 07305,manoj.joshi81@mailbox.in,2026-06-25,Cardiology,Coronary artery disease,165/76,87,38200,Card,4492 1757 5171 2065,Yes
+NL-1084,Manoj Joshi,77,M,Mysuru,8650 0232 6255,UQKPJ4842R,+91 97956 07305,manoj.joshi81@mailbox.in,2026-05-03,Cardiology,Hypertension,154/82,93,13600,Card,4492 1757 5171 2065,Yes
+NL-1085,Priya Reddy,69,F,Bengaluru,6370 0353 1705,NUOPR9618R,+91 84783 27909,priya.reddy16@mailbox.in,2026-04-15,Endocrinology,Type 2 diabetes,120/95,264,5900,UPI,priya.reddy16@okicici,No
+NL-1086,Divya Rao,22,F,Bengaluru,5596 4172 2679,ORZPR4120O,+91 71240 79475,divya.rao57@mailbox.in,2026-05-07,Pulmonology,Asthma,124/87,80,1700,UPI,divya.rao57@oksbi,No
+NL-1087,Manoj Nair,81,M,Mysuru,5554 6453 1807,TAQPN4946D,+91 70653 43587,manoj.nair83@mailbox.in,2026-03-02,Neurology,Migraine,135/70,100,3250,UPI,manoj.nair83@paytm,No
+NL-1088,Priya Reddy,69,F,Bengaluru,6370 0353 1705,NUOPR9618R,+91 84783 27909,priya.reddy16@mailbox.in,2026-06-27,Endocrinology,Type 2 diabetes,120/76,239,4450,Cash,,Yes
+NL-1089,Rohan Kulkarni,19,M,Bengaluru,9190 0390 1501,CNNPK0060U,+91 98402 89558,rohan.kulkarni92@mailbox.in,2026-02-20,Gastroenterology,Gastritis,120/87,128,2350,UPI,rohan.kulkarni92@ybl,Yes
+NL-1090,Manoj Nair,81,M,Mysuru,5554 6453 1807,TAQPN4946D,+91 70653 43587,manoj.nair83@mailbox.in,2026-07-11,Endocrinology,Type 2 diabetes,109/88,263,2600,Cash,,No
+NL-1091,Arjun Iyer,43,M,Hubballi,8965 7463 6410,EYEPI9536S,+91 89800 32382,arjun.iyer43@mailbox.in,2026-06-17,Neurology,Migraine,118/72,119,5700,Cash,,Yes
+NL-1092,Priya Reddy,69,F,Bengaluru,6370 0353 1705,NUOPR9618R,+91 84783 27909,priya.reddy16@mailbox.in,2026-04-08,Endocrinology,Type 2 diabetes,125/85,257,5400,Cash,,No
+NL-1093,Pooja Patel,75,F,Bengaluru,7254 9129 9034,DVLPP8453E,+91 74963 63259,pooja.patel82@mailbox.in,2026-01-15,Endocrinology,Type 2 diabetes,120/82,163,5400,UPI,pooja.patel82@okicici,No
+NL-1094,Kavya Iyer,56,F,Mangaluru,6923 5962 2878,REXPI1735V,+91 96976 36228,kavya.iyer90@mailbox.in,2026-02-23,Pulmonology,Allergic rhinitis,110/77,106,1300,UPI,kavya.iyer90@okhdfcbank,No
+NL-1095,Manoj Joshi,77,M,Mysuru,8650 0232 6255,UQKPJ4842R,+91 97956 07305,manoj.joshi81@mailbox.in,2026-09-20,Cardiology,Hypertension,172/86,112,20600,UPI,manoj.joshi81@oksbi,Yes
+NL-1096,Priya Joshi,34,F,Bengaluru,7863 1558 4089,AZJPJ6203F,+91 80187 73319,priya.joshi66@mailbox.in,2026-03-12,Pulmonology,Allergic rhinitis,113/88,96,3500,UPI,priya.joshi66@ybl,No
+NL-1097,Divya Rao,22,F,Bengaluru,5596 4172 2679,ORZPR4120O,+91 71240 79475,divya.rao57@mailbox.in,2026-02-19,Endocrinology,Thyroid disorder,121/77,105,3450,Card,4538 3913 6777 2403,Yes
+NL-1098,Priya Joshi,34,F,Bengaluru,7863 1558 4089,AZJPJ6203F,+91 80187 73319,priya.joshi66@mailbox.in,2026-07-26,General Medicine,Viral fever,132/81,111,4350,UPI,priya.joshi66@ybl,No
+NL-1099,Manoj Nair,81,M,Mysuru,5554 6453 1807,TAQPN4946D,+91 70653 43587,manoj.nair83@mailbox.in,2026-05-09,Pulmonology,Asthma,129/78,100,2300,Cash,,No
+NL-1100,Pooja Patel,75,F,Bengaluru,7254 9129 9034,DVLPP8453E,+91 74963 63259,pooja.patel82@mailbox.in,2026-05-11,Gastroenterology,Gastritis,120/85,99,3550,Cash,,No
