@@ -10,7 +10,7 @@ afterEach(cleanup)
 const t = (key: LayaKey, params?: Record<string, string>): string =>
   en[key].replace(/\{(\w+)\}/g, (_, name: string) => params?.[name] ?? '')
 
-function ops(initial: LayaView): LayaOperations & Record<keyof LayaOperations, ReturnType<typeof vi.fn>> {
+function ops(initial: LayaView): LayaOperations & Record<Exclude<keyof LayaOperations, 'decisions'>, ReturnType<typeof vi.fn>> {
   return {
     status: vi.fn(() => Promise.resolve(initial)),
     install: vi.fn(() => Promise.resolve<LayaView>({ state: 'installing', phase: 'Downloading' })),
