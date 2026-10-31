@@ -20,6 +20,8 @@ export const en = {
   'guard.label.local': 'On device',
   'guard.label.cloud': 'Cloud',
   'guard.label.private': 'Private',
+  'guard.label.offline': 'Offline, local',
+  'guard.offline': 'No internet. Every step runs on this machine, and nothing waits to reconnect to the cloud.',
   'guard.aria': 'Privacy shield: {label}',
   'guard.tip': 'Never leak, verify before escalating. Click to see what stayed on this machine.',
   'guard.title': 'Never leak, verify before escalating',

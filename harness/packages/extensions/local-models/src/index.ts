@@ -12,6 +12,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'node:fs'
+import { connect } from 'node:net'
 import { freemem } from 'node:os'
 import { join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
@@ -21,7 +22,7 @@ import type {} from '@deepseek-ai/dsh-tools'
 import { createUserMessage, isAgentLoopRequest, markAgentLoopRequest } from '@deepseek-ai/dsh-llm'
 import type { ContextFormed, GenerateOptions, LlmRuntime, MessageSource, StreamChunk, UserMessage } from '@deepseek-ai/dsh-llm'
 import { dshHomePath } from '@deepseek-ai/dsh-home-paths'
-import { CATALOG, catalogModel } from './catalog.ts'
+import { CATALOG, catalogModel, type CatalogModel } from './catalog.ts'
 import { LocalModelsController, type GuardHub } from './controller.ts'
 import { cleanRequest, EgressLog, isLocalProvider, judgeCommand, SessionGuard } from './guard.ts'
 import { sensitiveTarget } from './egress.ts'
@@ -102,6 +103,59 @@ export function apply(ctx: Context, config: Config): void {
     return guard
   }
   let lastSession: { id: string, agent: Agent } | undefined
+
+  // Offline means fully local. The probe opens a TCP connection to the cloud route's own host
+  // (no data sent), so GhostCode only contacts endpoints the user configured.
+  type SettingsLike = { describe(options: { redactSecrets: boolean }): Array<{ ns: string, value: unknown }> }
+  let networkDown = false
+  let probedAt = 0
+  const setNetwork = (down: boolean, provider: string): void => {
+    if (down === networkDown) return
+    networkDown = down
+    log.write({ time: Date.now(), kind: down ? 'went-offline' : 'back-online', provider,
+      detail: down ? `No internet: ${provider} is unreachable. GhostCode is fully local until it comes back.` : `Internet is back: ${provider} is reachable again.` })
+  }
+  const routeHost = (provider: string): { host: string, port: number } | undefined => {
+    const settings = ctx.get('settings') as SettingsLike | undefined
+    const value = settings?.describe({ redactSecrets: true }).find(entry => entry.ns === 'llm-pi-ai')?.value as
+      { providers?: Record<string, { baseURL?: string }> } | undefined
+    const url = value?.providers?.[provider]?.baseURL
+    if (url === undefined) return undefined
+    try {
+      const parsed = new URL(url)
+      return { host: parsed.hostname, port: Number(parsed.port) || (parsed.protocol === 'http:' ? 80 : 443) }
+    } catch {
+      return undefined
+    }
+  }
+  const reachable = (target: { host: string, port: number }): Promise<boolean> => new Promise((resolve) => {
+    const socket = connect({ host: target.host, port: target.port })
+    const done = (ok: boolean): void => { socket.destroy(); resolve(ok) }
+    socket.setTimeout(1500, () => { done(false) })
+    socket.once('connect', () => { done(true) })
+    socket.once('error', () => { done(false) })
+  })
+  /** Whether the cloud route is unreachable now; cached 10 s while online, 3 s while offline. */
+  const isOffline = async (provider: string): Promise<boolean> => {
+    if (Date.now() - probedAt < (networkDown ? 3000 : 10_000)) return networkDown
+    const target = routeHost(provider)
+    if (target === undefined) return networkDown
+    const ok = await reachable(target)
+    probedAt = Date.now()
+    setNetwork(!ok, provider)
+    return networkDown
+  }
+  /** The local model to fall back to: the one already running, else the best installed one that fits. */
+  const pickLocal = (): CatalogModel | undefined => {
+    const running = manager.server.model === undefined ? undefined : catalogModel(manager.server.model)
+    if (running !== undefined && manager.installed(running)) return running
+    const installed = CATALOG.filter(model => manager.installed(model))
+    return installed.filter(model => model.size <= freemem() * WEIGHT_SHARE).sort((a, b) => b.rank - a.rank)[0]
+      ?? installed.sort((a, b) => a.size - b.size)[0]
+  }
+  const agentOf = (sessionId: string): Agent | undefined =>
+    (ctx.get('agents') as { get(id: string): Agent | undefined } | undefined)?.get(sessionId)
+  const NETWORK_FAILURE = /fetch failed|ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|ETIMEDOUT|ENETUNREACH|EHOSTUNREACH|ENETDOWN|getaddrinfo|socket hang up|network|connection error|timed? ?out|IDLE_TIMEOUT/i
   const localRetries = new Map<string, number>()
   const liteTools = new WeakMap<Agent, () => void>()
 
@@ -117,6 +171,7 @@ export function apply(ctx: Context, config: Config): void {
         route: selection === undefined ? 'none' : isLocalProvider(selection.provider) ? 'local' : 'cloud',
         ...selection === undefined ? {} : { provider: selection.provider, model: selection.model },
         cloudPolicy: policy.cloud,
+        network: networkDown ? 'offline' : 'online',
         escalateTo: policy.escalateTo,
         escalateAfter: config.escalateAfter,
         totals: guard.totals(),
@@ -141,12 +196,12 @@ export function apply(ctx: Context, config: Config): void {
     const installed = CATALOG.filter(model => manager.installed(model))
     if (installed.length === 0) return
     const current = settings.describe({ redactSecrets: true }).find(entry => entry.ns === 'llm-pi-ai')?.value as
-      { providers?: Record<string, { baseURL?: string, models?: Array<{ id?: string, contextWindow?: number }> }> } | undefined
+      { providers?: Record<string, { baseURL?: string, models?: Array<{ id?: string, contextWindow?: number, maxTokens?: number }> }> } | undefined
     const route = current?.providers?.[LOCAL_ROUTE]
-    const saved = new Map((route?.models ?? []).map(model => [model.id, model.contextWindow]))
+    const saved = new Map((route?.models ?? []).map(model => [model.id, `${String(model.contextWindow)}/${String(model.maxTokens)}`]))
     // Rewrite when a model, the URL or a context window changed, so a raised window reaches the menu.
     if (route?.baseURL === manager.baseURL && saved.size === installed.length
-      && installed.every(model => saved.get(model.id) === model.contextWindow)) return
+      && installed.every(model => saved.get(model.id) === `${String(model.contextWindow)}/${String(Math.min(32_768, Math.floor(model.contextWindow / 2)))}`)) return
     const profile = {
       displayName: 'GhostCode Local',
       api: 'openai-completions',
@@ -156,7 +211,8 @@ export function apply(ctx: Context, config: Config): void {
         id: model.id,
         name: `${model.name} (${model.bits}, local)`,
         contextWindow: model.contextWindow,
-        maxTokens: Math.min(8192, Math.floor(model.contextWindow / 2)),
+        // Large enough for a whole file in one write; 8K cut replies off mid-file.
+        maxTokens: Math.min(32_768, Math.floor(model.contextWindow / 2)),
         reasoningEfforts: false,
       })),
     }
@@ -274,6 +330,42 @@ export function apply(ctx: Context, config: Config): void {
         void manager.saveWarm()
       })()
     }
+    const runtime = this
+    return (async function* (): AsyncIterable<StreamChunk> {
+      const local = await localInstead(options, runtime)
+      yield* local ?? sendCloud(options, runtime)
+    })()
+  }, { prepend: true })
+
+  /**
+   * Run a cloud-bound step on the local model instead when the session's model is now local
+   * (the user switched mid-step) or the cloud is unreachable. Offline switches the whole session.
+   */
+  const localInstead = async (options: GenerateOptions, runtime: LlmRuntime): Promise<AsyncIterable<StreamChunk> | undefined> => {
+    const sessionId = options.sessionId === undefined ? undefined : String(options.sessionId)
+    const agent = sessionId === undefined ? undefined : agentOf(sessionId)
+    const wanted = agent?.model.current()
+    const picked = wanted?.provider === LOCAL_ROUTE ? catalogModel(wanted.model) : undefined
+    const offline = picked === undefined && await isOffline(options.provider)
+    if (picked === undefined && !offline) return undefined
+    const model = picked ?? pickLocal()
+    if (model === undefined) return undefined
+    if (offline && agent !== undefined && sessionId !== undefined) {
+      agent.model.select({ provider: LOCAL_ROUTE, model: model.id })
+      guardOf(sessionId).recoveries++
+      log.write({ time: Date.now(), sessionId, kind: 'local-recovery', provider: LOCAL_ROUTE, model: model.id,
+        detail: `No internet: ${options.provider} is unreachable, so this step and the rest of the session run on ${model.name} locally.` })
+    }
+    await manager.start(model.id)
+    if (manager.server.state !== 'running') return undefined
+    const copy: GenerateOptions = { ...options, provider: LOCAL_ROUTE, model: model.id, maxTokens: Math.min(options.maxTokens ?? 32_768, 32_768) }
+    delete copy.reasoningEffort
+    if (isAgentLoopRequest(options)) markAgentLoopRequest(copy)
+    return runtime.stream(copy)
+  }
+
+  /** Clean and send one request to a cloud route, or block it in privacy mode. */
+  const sendCloud = (options: GenerateOptions, runtime: LlmRuntime): AsyncIterable<StreamChunk> => {
     const sessionId = options.sessionId === undefined ? undefined : String(options.sessionId)
     const guard = sessionId === undefined ? undefined : guardOf(sessionId)
     if (policy.cloud === 'block') {
@@ -297,8 +389,8 @@ export function apply(ctx: Context, config: Config): void {
       time: Date.now(), ...sessionId === undefined ? {} : { sessionId }, kind: 'cloud-request', provider: options.provider, model: options.model,
       bytes: result.bytes, files: result.files, secretsRemoved: result.found.length, secretKinds: [...new Set(result.found)], withheld: [...result.withheld],
     })
-    return this.stream(copy)
-  }, { prepend: true })
+    return runtime.stream(copy)
+  }
 
   // While a cloud model is active, secret files are not read at all.
   ctx.on('tools/pre-execute', async (exec, next) => {
@@ -336,6 +428,9 @@ export function apply(ctx: Context, config: Config): void {
       agent.model.select(back)
       log.write({ time: Date.now(), sessionId, kind: 'returned-local', provider: back.provider, model: back.model, detail: 'A check passed, so the session returned to the local model.' })
       message = `[GhostCode: the last check passed, so this session is back on the local model ${back.model}.]`
+    } else if (!verdict.passed && selection !== undefined && isLocalProvider(selection.provider) && guard.streak >= config.escalateAfter && networkDown) {
+      log.write({ time: Date.now(), sessionId, kind: 'local-recovery', provider: selection.provider, model: selection.model,
+        detail: `${String(guard.streak)} checks failed, but there is no internet, so the session stays local.` })
     } else if (!verdict.passed && selection !== undefined && isLocalProvider(selection.provider) && guard.streak >= config.escalateAfter && policy.cloud === 'allow') {
       const target = await escalationTarget()
       if (target !== undefined) {
@@ -354,6 +449,19 @@ export function apply(ctx: Context, config: Config): void {
   ctx.on('agent/request-error', async (payload, next) => {
     const { agent, provider, failure } = payload
     const sessionId = String(agent.session.id)
+    // Lost or slow internet on a cloud model: retry this step on the local model right away, no backoff.
+    if (!isLocalProvider(provider) && failure.status === undefined && NETWORK_FAILURE.test(`${failure.code} ${failure.message}`)) {
+      const model = pickLocal()
+      if (model !== undefined) {
+        setNetwork(true, provider)
+        probedAt = Date.now()
+        agent.model.select({ provider: LOCAL_ROUTE, model: model.id })
+        guardOf(sessionId).recoveries++
+        log.write({ time: Date.now(), sessionId, kind: 'local-recovery', provider: LOCAL_ROUTE, model: model.id,
+          detail: `${provider} failed (${failure.message}); retrying on ${model.name} locally instead of reconnecting.` })
+        return { kind: 'retry' }
+      }
+    }
     if (provider === LOCAL_ROUTE) {
       const tries = localRetries.get(sessionId) ?? 0
       const selection = agent.model.current()
@@ -375,5 +483,5 @@ export function apply(ctx: Context, config: Config): void {
       }
     }
     return await next()
-  })
+  }, { prepend: true })
 }

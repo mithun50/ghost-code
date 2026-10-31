@@ -114,6 +114,8 @@ export interface GuardView {
   readonly provider?: string
   readonly model?: string
   readonly cloudPolicy: 'allow' | 'block'
+  /** `offline` when the cloud route is unreachable: everything runs locally. */
+  readonly network: 'online' | 'offline'
   /** Configured escalation target, `provider/model`, or empty when escalation is off. */
   readonly escalateTo: string
   readonly escalateAfter: number
@@ -127,7 +129,7 @@ export interface GuardView {
 export interface EgressEntry {
   readonly time: number
   readonly sessionId?: string
-  readonly kind: 'cloud-request' | 'blocked-request' | 'blocked-read' | 'escalated' | 'returned-local' | 'local-recovery'
+  readonly kind: 'cloud-request' | 'blocked-request' | 'blocked-read' | 'escalated' | 'returned-local' | 'local-recovery' | 'went-offline' | 'back-online'
   readonly provider?: string
   readonly model?: string
   readonly bytes?: number

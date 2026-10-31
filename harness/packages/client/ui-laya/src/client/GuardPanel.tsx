@@ -93,7 +93,8 @@ export function GuardPanel({ ops, t }: GuardPanelProps) {
   const totals = view.totals
   const local = view.route === 'local'
   const kept = totals.secretsRemoved + totals.filesWithheld + totals.blockedReads
-  const label = view.cloudPolicy === 'block' ? t('guard.label.private') : local ? t('guard.label.local') : t('guard.label.cloud')
+  const offline = view.network === 'offline'
+  const label = offline ? t('guard.label.offline') : view.cloudPolicy === 'block' ? t('guard.label.private') : local ? t('guard.label.local') : t('guard.label.cloud')
   const layaOn = view.laya === 'on'
   const lastLaya = decisions.at(-1)
 
@@ -133,6 +134,7 @@ export function GuardPanel({ ops, t }: GuardPanelProps) {
               <code>{view.provider === undefined ? '-' : `${view.provider}/${view.model ?? ''}`}</code>
             </p>
             <p className={css.hint}>{t('guard.freeRam', { gb: (view.freeRam / 1024 ** 3).toFixed(1) })}</p>
+            {offline && <p className={css.line}>{t('guard.offline')}</p>}
           </div>
 
           <div className={css.section} data-guard-section="leak">
