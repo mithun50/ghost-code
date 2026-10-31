@@ -24,6 +24,7 @@ import {
   decideCommand, decideStop, FAILURE_NOTE, isCommandTool, stopState, textOf, VERIFY_NUDGE, type Ask,
 } from './hooks.ts'
 import { LayaSidecar } from './sidecar.ts'
+import { installAutoContinue } from './auto-continue.ts'
 
 export { LayaController } from './controller.ts'
 export type { LayaDecision, LayaProgress, LayaState, LayaStatusView } from './types.ts'
@@ -80,10 +81,14 @@ export function apply(ctx: Context, config: Config): void {
     return await askNoul(endpoint, state, question, config.timeoutMs.get())
   }
   const nudged = new Set<string>()
+  // A reply cut off at the output limit is continued before Laya judges it; Laya skips that stop.
+  const continued = new Set<string>()
+  installAutoContinue(ctx, SOURCE, continued)
 
   ctx.on('agent/turn-stopping', async ({ agent, turn }) => {
     if (sidecar.state !== 'on') return
     const key = `${agent.session.id}:${String(turn)}`
+    if (continued.has(key)) return
     const messages = agent.session.deriveMessages()
     const request = messages.findLast(message => message.role === 'user' && message.source.kind === 'user')
     const reply = messages.findLast(message => message.role === 'assistant')

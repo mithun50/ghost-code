@@ -185,5 +185,6 @@ Every decision is shown next to the brain button and appended to `~/.ghostcode/l
 | `GHOSTCODE_HOME` | `~/.ghostcode` | Home folder for sessions, models and logs |
 | `GHOSTCODE_LOCAL_PORT` | `18434` | Port of the local model server |
 | `GHOSTCODE_IDLE_EXIT_SECONDS` | `120` | Stop everything after this long with no browser; `0` turns it off |
+| `GHOSTCODE_AUTO_CONTINUE` | `3` | Times per turn a reply cut off at the output limit continues on its own; `0` turns it off |
 | `GHOSTCODE_LLAMA_BACKEND` | (auto) | `cpu` forces the CPU build of llama.cpp |
 | `DSH_PERMISSION_MODE` | `danger-full-access` | `workspace-write` or `read-only` turns the Windows sandbox on |
